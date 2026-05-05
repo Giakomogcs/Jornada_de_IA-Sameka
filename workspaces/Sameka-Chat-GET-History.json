@@ -1,0 +1,117 @@
+{
+  "name": "Sameka-Chat-GET-History",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "sameka-history",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "f42bdef9-943c-49db-bb1b-26af3fecc96b",
+      "name": "When called - GET history",
+      "position": [
+        224,
+        -112
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "40010dce-b754-4779-8c5d-d2e32bc2dc91"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Substituindo .item por .first() para acessar os dados do primeiro item\nconst sessionId = $input.first().json.query?.sessionId || $input.first().json.queryString?.sessionId;\n\nif (!sessionId) {\n  throw new Error('sessionId query parameter is required');\n}\n\nreturn { sessionId };"
+      },
+      "id": "3831aa51-7f95-4315-8a8d-4b9066c483fe",
+      "name": "Extract Session ID",
+      "position": [
+        448,
+        -112
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * \nFROM sameka_chat_message \nWHERE session_id = '{{ $json.sessionId }}' \nORDER BY id ASC;",
+        "options": {}
+      },
+      "id": "659cd869-a270-40ee-9fd0-8498b7958a05",
+      "name": "Get History from DB",
+      "position": [
+        672,
+        -112
+      ],
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "credentials": {
+        "postgres": {
+          "id": "jFjeYH6Nt3aRNkoM",
+          "name": "Supabase_database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "2da1a3ff-6293-4a33-872c-bbf66422dac6",
+      "name": "Return History",
+      "position": [
+        896,
+        -112
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When called - GET history": {
+      "main": [
+        [
+          {
+            "node": "Extract Session ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Session ID": {
+      "main": [
+        [
+          {
+            "node": "Get History from DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get History from DB": {
+      "main": [
+        [
+          {
+            "node": "Return History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "bcbdd70a-0c75-4187-92ed-bbb7d67b5e0c",
+  "meta": {
+    "instanceId": "03d32a206f2d8840fce482e6c587726f18775bd9177e9401c00ca76d3086ad41"
+  },
+  "id": "uanlhe3dvjq9fb7D",
+  "tags": []
+}

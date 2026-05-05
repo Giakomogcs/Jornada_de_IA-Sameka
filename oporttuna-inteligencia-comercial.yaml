@@ -1,0 +1,414 @@
+openapi: 3.0.3
+info:
+  title: API Oporttuna - Inteligência Comercial
+  version: 1.0.0
+  description: >
+    Endpoints de autenticação e inteligência comercial para consulta de leads por cidade.
+
+servers:
+  - url: https://oporttuna.com.br/portal-api-hmg
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Autenticação
+      summary: Login
+      description: Autentica o usuário e retorna um token JWT.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - senha
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: usuario@empresa.com
+                senha:
+                  type: string
+                  example: sua_senha_secreta
+      responses:
+        '200':
+          description: Login bem-sucedido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  codigo:
+                    type: integer
+                    example: 200
+                  retorno:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                      refreshToken:
+                        type: string
+                      expiresIn:
+                        type: string
+                required:
+                  - codigo
+                  - retorno
+              examples:
+                sucesso:
+                  value:
+                    codigo: 200
+                    retorno:
+                      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      refreshToken: "AEu4IL08w3D..._refresh_token"
+                      expiresIn: "3600"
+        '400':
+          description: Erro de validação no login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroValidacao'
+        '500':
+          description: Erro interno ao realizar login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroInterno'
+
+  /inteligencia-negocio/leads-por-cidade:
+    get:
+      tags:
+        - Inteligência de Negócios
+      summary: Listar leads por cidade
+      description: Retorna leads (empresas) para uma determinada cidade e UF.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cidade
+          in: query
+          required: true
+          description: Nome da cidade para consulta.
+          schema:
+            type: string
+          example: Birigui
+        - name: uf
+          in: query
+          required: true
+          description: Sigla da unidade federativa.
+          schema:
+            type: string
+          example: SP
+        - name: limite
+          in: query
+          required: false
+          description: Quantidade máxima de registros retornados (mín. 1, máx. 20).
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+          example: 20
+        - name: x-empresa-id
+          in: header
+          required: true
+          description: Identificador da empresa do cliente integrador.
+          schema:
+            type: string
+          example: ID-EMPRESA
+        - name: x-perfil-icp-id
+          in: header
+          required: false
+          description: ID do perfil ICP (Ideal Customer Profile) a ser considerado na consulta.
+          schema:
+            type: string
+          example: 1234567890abcdef
+      responses:
+        '200':
+          description: Consulta de leads realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  codigo:
+                    type: integer
+                    example: 200
+                  filtro:
+                    type: object
+                    properties:
+                      cidade:
+                        type: string
+                      uf:
+                        type: string
+                  idConsulta:
+                    type: string
+                  retorno:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LeadPorCidade'
+                required:
+                  - codigo
+                  - filtro
+                  - idConsulta
+                  - retorno
+              examples:
+                exemplo:
+                  value:
+                    codigo: 200
+                    filtro:
+                      cidade: "Birigui"
+                      uf: "SP"
+                    idConsulta: "oy1ShqthokYO9FXJVj2q"
+                    retorno:
+                      - tipoCNPJ: "MATRIZ"
+                        cnpjCompleto: "05102903000105"
+                        razaoSocial: "ASSOCIACAO DOS PROPRIETARIOS DA '' VILLA DO CHAFARIZ ''"
+                        nomeFantasia: "''VILLA DO CHAFARIZ''"
+                        situacaoCadastral: "ATIVA"
+                        naturezaJuridica: "Associação Privada"
+                        mei: "NÃO"
+                        simples: "NÃO"
+                        porte: "DEMAIS"
+                        cidade: "Birigui"
+                        uf: "São Paulo"
+                        bairro: "JARDIM PEROLA"
+                        enderecoNumero: "200"
+                        telefone: "NÃO INFORMADO"
+                        email: "NÃO INFORMADO"
+                        dataAbertura: "2002-06-12"
+                        atividadeEconomica: "Atividades associativas não especificadas anteriormente"
+                        enderecoCompleto: "RUA PADRE GERALDO GOSELING, 200  - JARDIM PEROLA, Birigui - SP, 16200-253"
+                        endereco: "PADRE GERALDO GOSELING"
+                        cep: "16200253"
+                        empresaCliente: "NAO"
+                        empresaProspect: "NAO"
+                        indicadorAtividade:
+                          faixaFaturamento: "EMPRESA ISENTA"
+                          numeroFuncionarios: "010 A 019"
+                          queryId: "fce9a801-56f3-4f65-9f4d-7a216faf3708"
+                        fotos:
+                          - "https://storage.googleapis.com/portal-observatorio.firebasestorage.app/imagens-google-places%2F07c9d7c7558430d0ee3fba6335a3ac7c.jpg"
+                          - "https://storage.googleapis.com/portal-observatorio.firebasestorage.app/imagens-google-places%2Fd84b1fba6ad019fad951c6d2334c9e37.jpg"
+                          - "https://storage.googleapis.com/portal-observatorio.firebasestorage.app/imagens-google-places%2F2fd58f3854bd0b062099ab659c947412.jpg"
+                          - "https://storage.googleapis.com/portal-observatorio.firebasestorage.app/imagens-google-places%2Ff1b90e466578a165e61aed7b568d697d.jpg"
+                        sites: []
+                        emails: []
+                        telefones:
+                          - "+55 18 3634-1333"
+                        redesSociais:
+                          - "https://www.instagram.com/p/DHMRquMPJqs/"
+                          - "https://www.facebook.com/614882765273790"
+                        possuiPresencaDigital: "SIM"
+                        notaICP: null
+                        classificacaoICP: null
+                        descricaoClassificacaoICP: null
+                        atividadeEconomicaSk: "-2988429005605363935"
+                        municipioSk: "3342"
+                        tipoLogradouro: "RUA"
+                      - tipoCNPJ: "MATRIZ"
+                        cnpjCompleto: "47976943000118"
+                        razaoSocial: "GFX RESERVATORIOS METALICOS LTDA"
+                        nomeFantasia: "***"
+                        situacaoCadastral: "ATIVA"
+                        naturezaJuridica: "Sociedade Empresária Limitada"
+                        mei: "NÃO"
+                        simples: "NÃO"
+                        porte: "MICRO EMPRESA"
+                        cidade: "Birigui"
+                        uf: "São Paulo"
+                        bairro: "CENTRO"
+                        enderecoNumero: "121"
+                        telefone: "(18) 9619-2524"
+                        email: "FALE@GFXRESERVATORIOS.COM.BR"
+                        dataAbertura: "2022-09-16"
+                        atividadeEconomica: "Montagem de estruturas metálicas"
+                        enderecoCompleto: "RUA RIBEIRO DE BARROS, 121 SALA  102 - CENTRO, Birigui - SP, 16200-071"
+                        endereco: "RIBEIRO DE BARROS"
+                        cep: "16200071"
+                        empresaCliente: "NAO"
+                        empresaProspect: "NAO"
+                        indicadorAtividade:
+                          faixaFaturamento: "ATE 50K"
+                          numeroFuncionarios: "SEM INFORMACAO"
+                          queryId: "4ec70bdb-1d69-40fb-b84b-b7f05347e040"
+                        fotos: []
+                        sites: []
+                        emails: []
+                        telefones: []
+                        redesSociais:
+                          - "https://www.instagram.com/saudeintegrativa_clinicamedica/"
+                          - "https://www.facebook.com/61564021723369"
+                        possuiPresencaDigital: "SIM"
+                        notaICP: null
+                        classificacaoICP: null
+                        descricaoClassificacaoICP: null
+                        atividadeEconomicaSk: "-6714570154096616639"
+                        municipioSk: "3342"
+                        tipoLogradouro: "RUA"
+        '400':
+          description: Erro de validação ou cidade não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroValidacao'
+        '401':
+          description: Não autorizado (token inválido ou ausente)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroNaoAutorizado'
+        '500':
+          description: Erro interno ao processar a consulta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroInterno'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LeadPorCidade:
+      type: object
+      properties:
+        tipoCNPJ:
+          type: string
+        cnpjCompleto:
+          type: string
+        razaoSocial:
+          type: string
+        nomeFantasia:
+          type: string
+        situacaoCadastral:
+          type: string
+        naturezaJuridica:
+          type: string
+        mei:
+          type: string
+        simples:
+          type: string
+        porte:
+          type: string
+        cidade:
+          type: string
+        uf:
+          type: string
+        bairro:
+          type: string
+        enderecoNumero:
+          type: string
+        telefone:
+          type: string
+        email:
+          type: string
+        dataAbertura:
+          type: string
+          format: date
+        atividadeEconomica:
+          type: string
+        enderecoCompleto:
+          type: string
+        endereco:
+          type: string
+        cep:
+          type: string
+        empresaCliente:
+          type: string
+        empresaProspect:
+          type: string
+        indicadorAtividade:
+          type: object
+          properties:
+            faixaFaturamento:
+              type: string
+            numeroFuncionarios:
+              type: string
+            queryId:
+              type: string
+        fotos:
+          type: array
+          items:
+            type: string
+        sites:
+          type: array
+          items:
+            type: string
+        emails:
+          type: array
+          items:
+            type: string
+        telefones:
+          type: array
+          items:
+            type: string
+        redesSociais:
+          type: array
+          items:
+            type: string
+        possuiPresencaDigital:
+          type: string
+        notaICP:
+          nullable: true
+        classificacaoICP:
+          nullable: true
+        descricaoClassificacaoICP:
+          nullable: true
+        atividadeEconomicaSk:
+          type: string
+        municipioSk:
+          type: string
+        tipoLogradouro:
+          type: string
+
+    ErroValidacao:
+      type: object
+      properties:
+        codigo:
+          type: integer
+          example: 400
+        mensagem:
+          type: string
+        i18n:
+          type: object
+          properties:
+            chave:
+              type: string
+        retorno:
+          type: object
+      required:
+        - codigo
+        - mensagem
+
+    ErroNaoAutorizado:
+      type: object
+      properties:
+        codigo:
+          type: integer
+          example: 401
+        mensagem:
+          type: string
+      required:
+        - codigo
+        - mensagem
+
+    ErroInterno:
+      type: object
+      properties:
+        codigo:
+          type: integer
+          example: 500
+        mensagem:
+          type: string
+        i18n:
+          type: object
+          properties:
+            chave:
+              type: string
+      required:
+        - codigo
+        - mensagem
+

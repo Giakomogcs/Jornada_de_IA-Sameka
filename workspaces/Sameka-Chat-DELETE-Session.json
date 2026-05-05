@@ -1,0 +1,119 @@
+{
+  "name": "Sameka-Chat-DELETE-Session",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "DELETE",
+        "path": "sameka-session",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "5b47db87-4f86-46c0-ad21-f8de22c05f36",
+      "name": "When called - DELETE session",
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "a2450955-99fe-4f55-b057-1894f0fca81f"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Substituindo .item por .first() para acessar os dados do primeiro item\nconst sessionId = $input.first().json.query?.sessionId || $input.first().json.queryString?.sessionId;\n\nif (!sessionId) {\n  throw new Error('sessionId query parameter is required');\n}\n\nreturn { sessionId };"
+      },
+      "id": "a52cb63a-18bf-4981-981a-239949952e60",
+      "name": "Extract Session ID to Delete",
+      "position": [
+        224,
+        0
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM sameka_chat_message WHERE session_id = '{{ $json.sessionId }}'",
+        "options": {}
+      },
+      "id": "23e44eb5-31da-4db5-997c-69a6531d9f88",
+      "name": "Delete Session from DB",
+      "position": [
+        448,
+        0
+      ],
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "credentials": {
+        "postgres": {
+          "id": "jFjeYH6Nt3aRNkoM",
+          "name": "Supabase_database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, message: 'Session deleted successfully' }) }}",
+        "options": {}
+      },
+      "id": "55024e69-541e-4a13-8897-43aab87148c0",
+      "name": "Return Success",
+      "position": [
+        672,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When called - DELETE session": {
+      "main": [
+        [
+          {
+            "node": "Extract Session ID to Delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Session ID to Delete": {
+      "main": [
+        [
+          {
+            "node": "Delete Session from DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Session from DB": {
+      "main": [
+        [
+          {
+            "node": "Return Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "96a7eaf8-b3e2-4017-ac4b-bd789ce1eb7a",
+  "meta": {
+    "instanceId": "03d32a206f2d8840fce482e6c587726f18775bd9177e9401c00ca76d3086ad41"
+  },
+  "id": "dkOqR1AKkTpDagss",
+  "tags": []
+}

@@ -1,0 +1,163 @@
+{
+  "name": "[Sameka] GET-Leads",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "0fcac8f4-b407-4541-ba71-f1be69252054",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://oporttuna.com.br/portal-api-hmg/auth/login",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"email\": \"suporte.orion@senai.com.br\",\n  \"senha\": \"123456\"\n}",
+        "options": {}
+      },
+      "id": "72beb692-f9d2-4039-a680-d2e9f9743e06",
+      "name": "Login API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        256,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const dadosIa = $input.item.json;\n\nlet cidade = dadosIa.cidade || '';\nlet uf = dadosIa.uf || '';\nlet limite = dadosIa.limite || 20;\n\n// Se a IA mandou tudo num campo \"query\" (ex: \"Diadema, SP\" ou \"Diadema - SP\")\nif (dadosIa.query && !cidade) {\n    let partes = dadosIa.query.split(/,| - |-/); // Separa usando vírgula ou traço\n    cidade = partes[0] ? partes[0].trim() : '';\n    uf = partes[1] ? partes[1].trim() : '';\n}\n\n// Retorna limpo e com fallbacks de segurança\nreturn {\n    json: {\n        cidade: cidade || 'Birigui',\n        uf: uf || 'SP',\n        limite: limite\n    }\n};"
+      },
+      "id": "0eb62f19-3052-4ddb-9eb3-0b6dbaf6848b",
+      "name": "Normalizar Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Função para corrigir caracteres corrompidos (UTF-8 vs ISO-8859-1)\nfunction fixEncoding(text) {\n    if (typeof text !== 'string') return text;\n    try {\n        // Tenta converter a string \"mojibake\" de volta para bytes e redecodificar\n        return decodeURIComponent(escape(text));\n    } catch (e) {\n        // Se falhar (ex: texto já está ok), limpa manualmente os padrões comuns de erro\n        return text\n            .replace(/茫/g, 'ã')\n            .replace(/茅/g, 'é')\n            .replace(/铆/g, 'í')\n            .replace(/贸/g, 'ó')\n            .replace(/煤/g, 'ú')\n            .replace(/锚/g, 'ê')\n            .replace(/芒/g, 'â')\n            .replace(/ Igreja/g, 'ç') // Caso o ç também esteja quebrado\n            .replace(/SA煤de/g, 'Saúde');\n    }\n}\n\nconst leadsBrutos = $input.item.json.retorno || [];\n\nconst leadsFiltrados = leadsBrutos.map(lead => ({\n    // Identificação Básica\n    empresa: fixEncoding(lead.razaoSocial),\n    nomeFantasia: fixEncoding(lead.nomeFantasia),\n    \n    // Localização para o Roteiro\n    endereco: fixEncoding(lead.enderecoCompleto),\n    bairro: fixEncoding(lead.bairro),\n    cidade: fixEncoding(lead.cidade),\n    tipoLogradouro: lead.tipoLogradouro,\n\n    // Contatos diretos\n    telefones: lead.telefones || [],\n    emails: lead.emails || [],\n    \n    // Mídia (Fotos para o agente)\n    fotos: lead.fotos || [],\n    \n    // Presença Digital e Redes Sociais\n    redesSociais: lead.redesSociais || [],\n    possuiPresencaDigital: lead.possuiPresencaDigital,\n\n    // Inteligência de Vendas\n    faturamento: lead.indicadorAtividade?.faixaFaturamento,\n    natureza: fixEncoding(lead.naturezaJuridica),\n    score: {\n        nota: lead.notaICP,\n        classificacao: lead.classificacaoICP,\n        descricao: fixEncoding(lead.descricaoClassificacaoICP)\n    }\n}));\n\nreturn { json: { leads: leadsFiltrados } };"
+      },
+      "id": "63134a9d-53ab-405d-8017-39ad2a207d67",
+      "name": "Filtrar Dados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://oporttuna.com.br/portal-api-hmg/inteligencia-negocio/leads-por-cidade",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "cidade",
+              "value": "={{ $('Normalizar Input').first().json.cidade }}"
+            },
+            {
+              "name": "uf",
+              "value": "={{ $('Normalizar Input').first().json.uf }}"
+            },
+            {
+              "name": "limite",
+              "value": "={{ $('Normalizar Input').first().json.limite }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.retorno.token }}"
+            },
+            {
+              "name": "x-empresa-id",
+              "value": "senai"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "102e3fa1-78f6-4848-9d0f-73dece746d5d",
+      "name": "Consultar Leads",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        464,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login API": {
+      "main": [
+        [
+          {
+            "node": "Consultar Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Input": {
+      "main": [
+        [
+          {
+            "node": "Login API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Leads": {
+      "main": [
+        [
+          {
+            "node": "Filtrar Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f7fdd514-68f9-4ef6-8df1-19bf0d9a907a",
+  "meta": {
+    "instanceId": "03d32a206f2d8840fce482e6c587726f18775bd9177e9401c00ca76d3086ad41"
+  },
+  "id": "f9fHSVVpdi3KiG0a",
+  "tags": []
+}

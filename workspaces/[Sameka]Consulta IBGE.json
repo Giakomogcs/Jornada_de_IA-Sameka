@@ -1,0 +1,80 @@
+{
+  "name": "[Sameka]Consulta IBGE",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "11d119a0-2c17-4365-94b3-985dec85373f",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://servicodados.ibge.gov.br/api/v1/localidades/estados/{{ $('Execute Workflow Trigger').first().json.uf }}/municipios",
+        "options": {}
+      },
+      "id": "9547f77a-e10b-446e-84be-14a0c3f44df2",
+      "name": "Consultar IBGE",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const municipios = $input.item.json || [];\n// Mapeia apenas os nomes para não gastar tokens do LLM com IDs e metadados\nconst nomesCidades = municipios.map(m => m.nome);\n\nreturn {\n  json: {\n    uf: $('Execute Workflow Trigger').first().json.uf,\n    total_cidades: nomesCidades.length,\n    cidades: nomesCidades\n  }\n};"
+      },
+      "id": "8f4559bc-a615-48b9-8fce-3ed2c5890a15",
+      "name": "Filtrar Cidades",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Consultar IBGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar IBGE": {
+      "main": [
+        [
+          {
+            "node": "Filtrar Cidades",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "be485ab7-6304-4b9a-b671-bc0395a85b43",
+  "meta": {
+    "instanceId": "03d32a206f2d8840fce482e6c587726f18775bd9177e9401c00ca76d3086ad41"
+  },
+  "id": "xqLg0YG9DvqZ4Aqz",
+  "tags": []
+}

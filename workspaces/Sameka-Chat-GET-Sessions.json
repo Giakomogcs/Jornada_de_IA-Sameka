@@ -1,0 +1,93 @@
+{
+  "name": "Sameka-Chat-GET-Sessions",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "sameka-sessions",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "845c78ff-1e7f-4095-b1ff-593e67ae945c",
+      "name": "When called - GET sessions",
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "d433b917-387e-4aff-adeb-78cd81421956"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  session_id, \n  MIN(created_at) as data_inicio,\n  (SELECT message->>'content'\n   FROM sameka_chat_message sameka_cm2 \n   WHERE sameka_cm2.session_id = sameka_cm.session_id \n   AND sameka_cm2.message->>'type' = 'human'\n   ORDER BY id DESC LIMIT 1) as titulo\nFROM sameka_chat_message sameka_cm\nWHERE user_id = '{{ $json.query.userId }}'::uuid\nGROUP BY session_id\nORDER BY data_inicio DESC;",
+        "options": {}
+      },
+      "id": "da321a69-9f0d-40f9-96f5-7452a98d7cc5",
+      "name": "List Sessions from DB",
+      "position": [
+        224,
+        0
+      ],
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "credentials": {
+        "postgres": {
+          "id": "jFjeYH6Nt3aRNkoM",
+          "name": "Supabase_database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "1da37e49-0192-473a-bf66-5531fc353466",
+      "name": "Return Sessions",
+      "position": [
+        448,
+        0
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When called - GET sessions": {
+      "main": [
+        [
+          {
+            "node": "List Sessions from DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Sessions from DB": {
+      "main": [
+        [
+          {
+            "node": "Return Sessions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "91b4ae8a-df20-4a91-b2d5-9c20351aafcf",
+  "meta": {
+    "instanceId": "03d32a206f2d8840fce482e6c587726f18775bd9177e9401c00ca76d3086ad41"
+  },
+  "id": "N67sr7zJVMcfIFA6",
+  "tags": []
+}

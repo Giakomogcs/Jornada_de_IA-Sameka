@@ -1,0 +1,20 @@
+[build]
+  publish = "."
+
+# Disable ALL Netlify post-processing — it destroys inline JS
+[build.processing]
+  skip_processing = true
+
+[build.processing.html]
+  pretty_urls = false
+
+[build.processing.js]
+  bundle = false
+  minify = false
+
+[build.processing.css]
+  bundle = false
+  minify = false
+
+[build.processing.images]
+  compress = false

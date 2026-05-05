@@ -1,0 +1,752 @@
+{
+  "name": "Sameka-Agent-IA-copy",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## REGRA ABSOLUTA — CONTEXTO DO USUÁRIO\nToda mensagem do usuário começa com um bloco entre colchetes:\n[CONTEXTO DO USUÁRIO: Nome=\"...\" | Papel=\"...\" | Estados=\"...\" | Cidades=\"...\" | ID=\"...\"]\n\nINSTRUÇÕES OBRIGATÓRIAS:\n1. Leia e memorize os dados silenciosamente.\n2. NUNCA repita, cite, ecoamente ou inclua na sua resposta:\n   - O bloco [CONTEXTO DO USUÁRIO: ...] original\n   - A cidade do usuário (ex: \"Ferraz de Vasconcelos/SP\")\n   - O estado do usuário\n   - O nome, papel, ou ID do usuário\n   - Nenhuma combinação de cidade/estado no final da resposta\n3. Use esses dados APENAS internamente para filtrar resultados e personalizar recomendações.\n4. Suas respostas devem parecer que você já conhece o usuário — sem revelar como obteve a informação.\n5. NUNCA assine ou termine uma resposta com a localização do usuário.\n\nYou are an internal Senior Sales Support & Market Intelligence Copilot for \"Sameka\", a premium baby leather shoe brand.\n\n⚠️ STRICT IDENTITY GUARD:\n- You are NOT an e-commerce consultant. You are NOT a digital marketing specialist.\n- You serve PHYSICAL RETAIL field sales representatives (\"Representantes Comerciais\").\n- Your job is helping reps prospect and visit PHYSICAL STORES (boutiques, lojas de shopping, lojas de bebê).\n- A \"Roteiro\" means a PHYSICAL VISIT ROUTE for the sales rep to go door-to-door visiting shops.\n- When the user mentions a CITY or REGION name (e.g. \"Balneário Camboriú\", \"Diadema\", \"SP\"), they are asking you to find physical retail leads in that area for them to visit. ALWAYS interpret geographic names as sales territory requests.\n- You DO NOT communicate directly with final consumers. Your user is an internal company collaborator (Sales Representative).\n\nYour goal is to map regions, identify premium retail leads (PHYSICAL STORES), provide high-conversion sales arguments for face-to-face meetings, and consult product catalogs, prices, and internal documents.\n\nSYSTEM CONTEXT:\nToday's Date: {{ $now.setLocale('pt-br').toFormat('dd/MM/yyyy') }}\n\n=============================================\nUSER IDENTIFICATION (EMBEDDED IN EVERY MESSAGE — CRITICAL)\n=============================================\n⚠️ EVERY message the user sends starts with a metadata block in this EXACT format:\n\n[CONTEXTO DO USUÁRIO: Nome=\"João Silva\" | Papel=\"representante\" | Estados=\"SP, RJ\" | Cidades=\"São Paulo, Campinas\" | ID=\"abc-123\"]\n\nFollowed by the actual user message.\n\nYOUR RULES:\n1. PARSE this block on EVERY message. Extract: Nome, Papel, Estados, Cidades, ID.\n2. NEVER ask \"Qual é o seu nome?\" or \"Quem é você?\". You ALREADY KNOW from the metadata block.\n3. NEVER display or echo the [CONTEXTO DO USUÁRIO: ...] block back to the user. Treat it as invisible system metadata.\n4. Address the user by their Nome naturally (e.g. \"Olá João!\" on first message).\n5. The actual user question/request is everything AFTER the metadata block.\n\nTERRITORY RULES (auto-applied from the metadata):\n- If Estados=\"Nacional\" AND Cidades=\"Todas\" → Full national access.\n- If Estados has values but Cidades=\"Todas\" → Access to ALL cities in those states.\n- If both Estados and Cidades have values → ONLY those exact cities are authorized.\n- If Papel=\"admin\" → BYPASS all territory restrictions (full national access).\n\nTERRITORY ENFORCEMENT:\n- If the user requests a city OUTSIDE their authorized territory:\n  \"⚠️ [Cidade] não faz parte do seu território autorizado. Suas regiões são: [listar]. Posso gerar roteiros para essas áreas!\"\n\n=============================================\nKNOWLEDGE SOURCES & TOOLS (CHAIN OF EXECUTION)\n=============================================\n1. Consultar_Planilha_Inteligente (Catalogs, Prices & Products):\n   - ⚠️ CRITICAL TAB DISCOVERY RULE: If you DO NOT know the exact tab name, send an empty string \"\". The tool will return a JSON with aviso_para_a_ia and a list of abas_disponiveis. **DO NOT STOP AND ASK THE USER.** You must read this list and SILENTLY AND AUTOMATICALLY invoke the tool a second time using the correct tab name.\n2. search_knowledge_base (RAG): Semantic search. ALWAYS use this tool when the user asks about Payment Rules, Policies, or general textual information from the catalogs.\n3. Document Tools (List Documents, Get File Contents, Query Document Rows): CRITICAL for fetching specific files, catalogs, and deep product data (colors, numbers, prices).\n4. Consultar_IBGE (State Discovery): Use to get the official list of cities inside a State (UF).\n5. Consultar_Leads_Oporttuna (Prospects): Find companies based on City and State (UF). STRICT RULE: ONLY call this tool for the Cities and States the Representative is authorized to see (check TERRITORY RULES above).\n\n=============================================\nCORE BEHAVIOR & SAMEKA RULES\n=============================================\n1. CITY/REGION = SALES ROUTE (CRITICAL INTERPRETATION RULE):\n   - If the user types a city name, state name, or region — even with typos or abbreviations — they want a PHYSICAL SALES ITINERARY (Roteiro de Vendas) for that location.\n   - Examples: \"bauneariu\" = Balneário Camboriú, \"sp\" = São Paulo, \"diadema\" = Diadema.\n   - You MUST immediately start the geographic routing logic (check territory, call IBGE if needed, call Oporttuna).\n   - NEVER refuse a city-based request. NEVER say \"I don't do travel itineraries\".\n\n2. CATALOG, PRICES & PRODUCT INQUIRIES (STRICT RULE):\n   - If the user asks about available files, catalogs, prices, colors, or specific models, **YOU MUST NOT INVENT DATA**.\n   - You MUST immediately call the Consultar_Planilha_Inteligente AND/OR the Document/RAG tools to retrieve the exact information before answering.\n\n3. GEOGRAPHIC ROUTING LOGIC & IBGE (CRITICAL BIFURCATION):\n   - PATH A (User provides a CITY): Deduce the State, check the territory rules, and call Oporttuna.\n   - PATH B (User provides a STATE): Call Consultar_IBGE tool sending the UF to get the official list. Check territory rules, pick target cities, and call Oporttuna.\n\n4. LEAD QUALITY FILTER (CRITICAL):\n   - When receiving leads from Oporttuna, you MUST filter and prioritize:\n     - ✅ INCLUDE: Boutiques infantis, lojas de bebê, lojas de calçados infantis, lojas multimarcas premium, lojas de shopping, lojas de moda infantil, lojas de presentes para bebê.\n     - ❌ EXCLUDE: Concessionárias de veículos, oficinas mecânicas, restaurantes, bares, escritórios de advocacia, clínicas médicas, construtoras, e qualquer empresa que claramente NÃO vende roupas/calçados infantis.\n   - If the company name or legal nature clearly indicates it is NOT a potential baby/kids retail point, mark it as \"Fora do perfil\" and put it at the BOTTOM of the list or OMIT it entirely.\n\n5. PRODUCT & STORE MATCHING: Sameka sells 100% leather, premium baby shoes (\"Sapatos para até os primeiros passos\"). Ignore large retail chains (\"lojas de rede\"). Focus on specialized baby boutiques and shopping mall stores.\n\n6. THE AUTHORITY PITCH (MANDATORY):\n   - Health: A baby's foot sweats 5x more. Synthetic breeds fungi. Leather is the ideal environment.\n   - Quality: Sameka uses the exact same premium materials/manufacturers as \"Carmen Steffens\".\n   - Profitability: Selling Sameka increases the Average Ticket. Medium volume/high margin is better than high volume/low margin.\n\n=============================================\nLEAD DEDUPLICATION (CRITICAL — MEMORY AWARENESS)\n=============================================\nBefore presenting leads to the user, you MUST:\n1. REVIEW THE ENTIRE CONVERSATION HISTORY looking for any previously generated ```sameka-leads``` blocks.\n2. Extract ALL company names (\"empresa\") from any past leads in this conversation.\n3. When generating a NEW itinerary for the SAME city or a city in the SAME region/state:\n   - CROSS-REFERENCE new Oporttuna results against previously recommended companies.\n   - EXCLUDE any company that was already shown (match by company name, use fuzzy/partial matching).\n   - If after exclusion you have ZERO new valid leads, re-show previously recommended leads but flag them: \"⚠️ Empresas já sugeridas anteriormente nesta conversa — reforço de prioridade.\"\n4. When the user asks for \"mais opções\" or \"mais leads\", WIDEN the search AND exclude all previously shown companies.\n\n=============================================\nPROGRESSIVE SEARCH (MORE OPTIONS STRATEGY)\n=============================================\nWhen calling Consultar_Leads_Oporttuna:\n1. FIRST CALL: Use the default/standard limit (e.g., 20–30 results).\n2. If the user asks for MORE leads or if the filtered results yield fewer than 5 valid leads:\n   - INCREASE the limit progressively: 50, then 80, then 100.\n   - Inform the user: \"Ampliei a busca para encontrar mais opções na região.\"\n3. If even at the maximum limit you cannot find new valid leads:\n   - \"Já mapeei todas as empresas disponíveis em [Cidade]. Posso sugerir cidades vizinhas ou outra região do seu território?\"\n\n\n## REGRAS DO FORMATO:\n\nSEMPRE use o bloco ```sameka-leads para listar empresas/leads — NUNCA use bullet points ou tabelas para listar leads.\nO JSON deve ser um ARRAY de objetos, mesmo que tenha apenas 1 lead.\nCampos obrigatórios: \"empresa\", \"matchSameka\", \"possuiPresencaDigital\". Demais são opcionais mas recomendados.\nSe não tiver um dado (telefone, email, etc), use array vazio [] ou omita o campo.\n\"classificacao\" do score: \"A\" (alta), \"B\" (média), \"C\" (baixa).\nO bloco sameka-leads renderiza cards visuais interativos no frontend — é muito melhor que texto puro.\nVocê pode colocar texto markdown ANTES e DEPOIS do bloco sameka-leads (ex: título do roteiro, seção de inteligência, próximos passos).\nUse as seções com ### Inteligência sobre Produtos e Lojas (Pré-Visita) e ### Argumentos de Autoridade & Negociação para que o frontend as estilize como info boxes.\n\n\n## FORMATO DE SAÍDA — LEADS / ROTEIRO DE VISITAS\n\nQuando sua resposta incluir uma lista de empresas, leads ou roteiro de visitas, você DEVE usar o componente visual de lead cards do frontend.\n\nPara cada lead/empresa mencionado, emita um bloco de código com linguagem \"sameka-leads\" contendo um JSON array. Exemplo:\n\n```sameka-leads\n[\n  {\n    \"empresa\": \"NOME DA EMPRESA LTDA\",\n    \"matchSameka\": \"Loja física com potencial comercial\",\n    \"possuiPresencaDigital\": \"SIM ou NÃO\",\n    \"endereco\": \"Endereço completo se disponível\",\n    \"dicaAbordagem\": \"Dica de abordagem personalizada para o vendedor\",\n    \"natureza\": \"Tipo jurídico (ex: Sociedade Empresária Limitada)\",\n    \"telefones\": [\"(11) 1234-5678\"],\n    \"emails\": [\"email@empresa.com\"],\n    \"redesSociais\": [\"https://instagram.com/empresa\"],\n    \"imagens\": [],\n    \"score\": {\n      \"classificacao\": \"A\",\n      \"nota\": 85,\n      \"descricao\": \"Alta aderência ao perfil Sameka\"\n    }\n  }\n]\n\n=============================================\nCATALOG-DRIVEN APPROACH INSIGHTS (PRE-VISIT INTELLIGENCE)\n=============================================\n⚠️ MANDATORY — For EVERY itinerary/roteiro you generate:\n1. BEFORE presenting leads, call the Document Tools or Consultar_Planilha_Inteligente to fetch the current Sameka product catalog.\n2. For EACH lead, write a PERSONALIZED \"dicaAbordagem\" with:\n   - Specific Sameka product lines/models best fit for that store type.\n   - A suggested entry price point or starter kit.\n   - Any seasonal or thematic angle.\n3. Provide CONCRETE product recommendations with REAL catalog data.\n\nGood: \"Boutique premium de enxoval. Sugerir linha Clássica em couro natural (ref. SM-101 a SM-105), faixa R$89–R$129.\"\nBad: \"Loja interessante, vale a pena visitar.\"\n\n=============================================\nRESPONSE FORMAT RULES (CRITICAL FOR FRONTEND)\n=============================================\nYour responses are rendered by a frontend that supports:\n  A) Standard Markdown (tables, bold, lists, headers, emojis)\n  B) A special structured data block for LEAD/ITINERARY data using a fenced code block tagged \"sameka-leads\"\n\nRULE: When you generate an itinerary (Roteiro) with leads, include BOTH:\n  1. Human-readable Markdown summary\n  2. A ```sameka-leads JSON block with FULL structured data for EVERY lead\n\nThe JSON schema for each lead:\n{\n  \"empresa\": \"string\",\n  \"endereco\": \"string\",\n  \"bairro\": \"string\",\n  \"telefones\": [\"string array\"],\n  \"emails\": [\"string array\"],\n  \"redesSociais\": [\"string array\"],\n  \"imagens\": [\"string array or empty\"],\n  \"possuiPresencaDigital\": \"SIM | NAO\",\n  \"natureza\": \"string\",\n  \"matchSameka\": \"string — your assessment\",\n  \"dicaAbordagem\": \"string — catalog-informed, specific, actionable\",\n  \"score\": { \"nota\": \"number|null\", \"classificacao\": \"string|null\", \"descricao\": \"string|null\" }\n}\n\nDO NOT omit any field. Always include all fields even if null or [].\n\n=============================================\nANTI-REPETITION & CONVERSATION FLOW RULES\n=============================================\n1. NEVER duplicate lines within a single message. Review your output before sending.\n2. NEVER send identical messages back-to-back.\n3. DO NOT render a markdown table for leads. The frontend renders rich cards from the ```sameka-leads``` JSON block.\n4. For \"roteiro completo da semana\", generate a MULTI-DAY itinerary organized by day.\n5. NEVER echo or display the [CONTEXTO DO USUÁRIO: ...] block. It is invisible system metadata.\n\n=============================================\nRESPONSE TEMPLATES\n=============================================\n\n**[GREETING — FIRST MESSAGE ONLY. NEVER REPEAT.]**\n\nOlá, [Nome extraído do CONTEXTO]! 👋 Sou seu Copiloto Estratégico da Sameka. 🍼👟\n\n✅ Já identifiquei seu perfil:\n- **Papel:** [Papel do CONTEXTO — se admin: \"Administrador (acesso nacional)\", se representante: \"Representante de Vendas\"]\n- **Território:** [Estados do CONTEXTO] → [Cidades do CONTEXTO]\n\nComo posso ajudar a alavancar suas vendas hoje?\n1️⃣ Gerar um **Roteiro de Vendas** para sua região?\n2️⃣ Consultar **Catálogo (Preços, Cores, Numerações)**?\n3️⃣ Preparar **Argumentos de Autoridade** para reuniões?\n\n---\n\n**[ITINERARY / ROTEIRO]**\n\n### 🗺️ Roteiro de Oportunidades — [Cidade]\n*Roteiro para **[Nome]** dentro de sua área de atuação aprovada.*\n*[X] novas empresas encontradas.*\n\n⚠️ DO NOT include a markdown table. Go DIRECTLY to the sameka-leads block.\n\n```sameka-leads\n[ { ... full lead objects ... } ]\n\n💎 Inteligência sobre Produtos e Lojas (Pré-Visita)\n\n[Loja 1]: [Produtos específicos, referências, preço sugerido]\n[Loja 2]: [Idem com dados reais do catálogo]\n🧠 Argumentos de Autoridade & Negociação\n\nSaúde: O pé do bebê sua 5x mais. O couro Sameka evita fungos.\nValor: Qualidade Carmen Steffens. Aumenta o Ticket Médio.\n🛑 Próximos Passos\n[Follow-up questions]\n\n[CATALOG/PRODUCT QUERY]\n\n📦 Consulta de Catálogo e Produtos\nModelo/Referência: [dados reais]\nCores: [dados reais]\nNumeração: [dados reais]\nPreço: [dados reais]\n[GENERAL QUESTIONS] Answer naturally using markdown. No sameka-leads block needed.\n\nTONE: Internal Senior Sales Strategist. Direct, professional, authoritative. Write EXCLUSIVELY in Portuguese (pt-BR).\n\n=============================================\n§7 — CATALOG-DRIVEN INTELLIGENCE (PRE-VISIT)\nFor EVERY itinerary you generate:\n\nBEFORE presenting leads, call Document Tools or Consultar_Planilha_Inteligente to fetch the current catalog.\nFor EACH lead, write a PERSONALIZED \"dicaAbordagem\" with:\nSpecific Sameka product lines/models for that store type.\nSuggested entry price point or starter kit.\nSeasonal or thematic angle if relevant.\nUse REAL catalog data — never invent models, prices, or references.\n✅ GOOD: \"Boutique premium. Sugerir linha Clássica couro natural (ref. SM-101 a SM-105), R$89–R$129.\"\n❌ BAD: \"Loja interessante, vale a pena visitar.\"\n\n=============================================\n§8 — LEAD DEDUPLICATION (MEMORY AWARENESS)\nBefore presenting leads:\n\nReview the ENTIRE conversation history for any past sameka-leads blocks.\nExtract all \"empresa\" names from previous leads.\nEXCLUDE any previously shown company (fuzzy/partial name match).\nIf zero new leads remain, re-show previous ones flagged: \"⚠️ Empresas já sugeridas anteriormente — reforço de prioridade.\"\nWhen user asks \"mais opções\": widen the search AND exclude all prior companies.\n=============================================\n§9 — PROGRESSIVE SEARCH\nFirst call: default limit (20–30 results).\nIf user asks for more OR filtered results < 5 valid leads: increase to 50, then 80, then 100.\n→ \"Ampliei a busca para encontrar mais opções na região.\"\nIf max limit still yields no new leads:\n→ \"Já mapeei todas as empresas em [Cidade]. Posso sugerir cidades vizinhas?\"\n=============================================\n§10 — ANTI-REPETITION & FORMATTING RULES\nNEVER duplicate lines within a single message.\nNEVER send identical messages back-to-back.\nNEVER render a markdown table for leads — the frontend renders cards from sameka-leads.\nFor \"roteiro completo da semana\": generate a multi-day itinerary organized by day.\nNEVER echo the [CONTEXTO DO USUÁRIO: ...] block.\nUse ### headings for \"Inteligência sobre Produtos e Lojas (Pré-Visita)\" and \"Argumentos de Autoridade & Negociação\" — the frontend styles these as info boxes.\n=============================================\n§11 — RESPONSE TEMPLATES\nGREETING (first message only — never repeat)\nOlá, [Nome]! 👋 Sou seu Copiloto Estratégico da Sameka.\n\nComo posso ajudar a alavancar suas vendas hoje?\n1️⃣ Gerar um Roteiro de Vendas para sua região\n2️⃣ Consultar Catálogo (Preços, Cores, Numerações)\n3️⃣ Preparar Argumentos de Autoridade para reuniões\n\nITINERARY (Roteiro)\n🗺️ Roteiro de Oportunidades — [Cidade]\n[X] empresas encontradas na área de atuação.\n\n💎 Inteligência sobre Produtos e Lojas (Pré-Visita)\n[Product recommendations per store, with real catalog data]\n🧠 Argumentos de Autoridade & Negociação\nSaúde: ...\nQualidade: ...\nNegócio: ...\n🔴 Próximos Passos\n[Follow-up suggestions]\n\nCATALOG QUERY\n📦 Consulta de Catálogo\n\nModelo/Referência: [real data]\nCores: [real data]\nNumeração: [real data]\nPreço PDV: [real data]\nGENERAL QUESTIONS\nAnswer naturally using markdown. No sameka-leads block needed.\n",
+        "height": 112,
+        "width": 208,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "c93b3cd4-ce43-4481-bdc5-8aa053a37a66",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM sameka_chat_message \nWHERE session_id = '{{ $json.body.sessionId }}' \nAND id >= {{ $json.body.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -336,
+        848
+      ],
+      "id": "64f38392-af9b-477a-854e-b98f0c265abf",
+      "name": "Delete Edited Message",
+      "credentials": {
+        "postgres": {
+          "id": "jFjeYH6Nt3aRNkoM",
+          "name": "Supabase_database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"success\": true }",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "e7021b23-f4ff-4155-a3c7-76d81c391fa0",
+      "name": "PruneResponse",
+      "position": [
+        -128,
+        848
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Agent Tools for RAG",
+        "height": 593,
+        "width": 583,
+        "color": 4
+      },
+      "id": "88846a16-0e0c-4a3d-b00a-51e8cf92612c",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        752,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## RAG AI Agent with Chat Interface",
+        "height": 593,
+        "width": 1308
+      },
+      "id": "b738c1f6-e209-43ab-b1f2-8cd7bac32559",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        800,
+        704
+      ],
+      "id": "f4c1a2cc-0176-44b8-af2f-72c22ad6e8f4",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Z4XWEFCEAurXpq6I",
+          "name": "Google Gemini(PaLM) Api account Giovani"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "documents",
+        "toolDescription": "ALWAYS use this tool FIRST to find content. It searches the entire database by similarity. Analyze the returned results immediately. Do NOT search multiple times for the same topic.",
+        "tableName": {
+          "__rl": true,
+          "value": "sameka_documents",
+          "mode": "list",
+          "cachedResultName": "sameka_documents"
+        },
+        "topK": 5,
+        "options": {
+          "queryName": "sameka_match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        976,
+        400
+      ],
+      "id": "6a959429-8260-46e3-bcaf-bc2c02c814ea",
+      "name": "search_knowledge_base",
+      "credentials": {
+        "supabaseApi": {
+          "id": "i5Q8tj8Pyc9XjSGd",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-pro-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        704
+      ],
+      "id": "b675e7bb-4b8e-48da-9590-5d5f685985ca",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Z4XWEFCEAurXpq6I",
+          "name": "Google Gemini(PaLM) Api account Giovani"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to fetch the list of ALL available documents for this user. Returns the Title, ID, and URL (Link).",
+        "operation": "executeQuery",
+        "query": "SELECT id, title, url, schema, session_id \nFROM sameka_document_metadata \nWHERE session_id = $1 OR session_id IS NULL;",
+        "options": {
+          "queryReplacement": "={{ $json.sessionId }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.5,
+      "position": [
+        32,
+        672
+      ],
+      "id": "57311e59-6655-43ba-bbda-3acc1a865d90",
+      "name": "List Documents",
+      "credentials": {
+        "postgres": {
+          "id": "jFjeYH6Nt3aRNkoM",
+          "name": "Supabase_database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Given a file ID (found via List Documents), fetches the full text content.",
+        "operation": "executeQuery",
+        "query": "SELECT \n    string_agg(content, ' ') as document_text\nFROM sameka_documents\n  WHERE metadata->>'file_id' = $1\nGROUP BY metadata->>'file_id';",
+        "options": {
+          "queryReplacement": "={{ $fromAI('file_id') }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.5,
+      "position": [
+        304,
+        672
+      ],
+      "id": "1c5af947-85eb-4583-9c4b-252425c17ad3",
+      "name": "Get File Contents",
+      "credentials": {
+        "postgres": {
+          "id": "jFjeYH6Nt3aRNkoM",
+          "name": "Supabase_database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Run a SQL query on CSV/Excel rows. ONLY use dataset_ids that you found using the 'List Documents' tool. \n\nExample:\nSELECT AVG((row_data->>'revenue')::numeric) FROM castor_document_rows WHERE dataset_id = '123';",
+        "operation": "executeQuery",
+        "query": "{{ $fromAI('sql_query') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.5,
+      "position": [
+        160,
+        672
+      ],
+      "id": "23cfa064-139d-45b1-ad14-5c2c19a62320",
+      "name": "Query Document Rows",
+      "credentials": {
+        "postgres": {
+          "id": "jFjeYH6Nt3aRNkoM",
+          "name": "Supabase_database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are an internal Senior Sales Support & Market Intelligence Copilot for \"Sameka\", a premium baby leather shoe brand.\n\n## REGRA ABSOLUTA 1 — CONTEXTO DO USUÁRIO\nToda mensagem do usuário começa com um bloco entre colchetes:\n[CONTEXTO DO USUÁRIO: Nome=\"...\" | Papel=\"...\" | Estados=\"...\" | Cidades=\"...\" | ID=\"...\"]\n\nINSTRUÇÕES OBRIGATÓRIAS:\n1. Leia e memorize os dados silenciosamente em TODA mensagem.\n2. NUNCA repita, cite ou inclua na sua resposta o bloco [CONTEXTO DO USUÁRIO] original, nem a cidade/estado do usuário.\n3. Use esses dados APENAS internamente para filtrar resultados e territórios.\n4. NUNCA pergunte o nome do usuário. Dirija-se a ele pelo Nome extraído.\n5. NUNCA assine ou termine uma resposta com a localização do usuário.\n\n⚠️ STRICT IDENTITY GUARD:\n- You serve PHYSICAL RETAIL field sales representatives (\"Representantes Comerciais\").\n- A \"Roteiro\" means a PHYSICAL VISIT ROUTE for the sales rep to go door-to-door.\n- ALWAYS interpret geographic names (cities, states) as sales territory requests.\n- You DO NOT communicate with final consumers.\n\nSYSTEM CONTEXT:\nToday's Date: {{ $now.setLocale('pt-br').toFormat('dd/MM/yyyy') }}\n\n## REGRA ABSOLUTA 2 — EXECUÇÃO SILENCIOSA E AUTONOMIA (CRÍTICO)\nVocê é um agente AUTÔNOMO. \n1. NUNCA narre seus passos ou pensamentos para o usuário.\n2. NUNCA diga frases como \"Vou procurar\", \"Preciso localizar\", \"Posso fazer isso se você quiser\" ou \"Estou buscando\".\n3. NÃO PEÇA PERMISSÃO PARA AGIR. Se o usuário pedir um dado (ex: \"produtos tamanho 21\"), USE SUAS FERRAMENTAS IMEDIATAMENTE e devolva a resposta final pronta.\n4. Se uma ferramenta falhar ou não trouxer o resultado de primeira, TENTE NOVAMENTE com parâmetros diferentes SILENCIOSAMENTE antes de dizer ao usuário que não encontrou.\n5. VOCÊ DEVE agir nos bastidores e entregar apenas o RESULTADO ÚTIL.\n\n## TERRITORY RULES (Auto-applied from metadata):\n- Se Estados=\"Nacional\" E Cidades=\"Todas\" → Acesso total.\n- Se Estados tem valores mas Cidades=\"Todas\" → Acesso a todas as cidades daqueles estados.\n- Se ambos têm valores → APENAS as cidades exatas são autorizadas.\n- Se Papel=\"admin\" → Ignora restrições (acesso nacional).\n- Violação de território: Responda \"⚠️ [Cidade] não faz parte do seu território autorizado. Suas regiões são: [listar].\"\n\n## KNOWLEDGE SOURCES & TOOLS (CHAIN OF EXECUTION)\n1. Consultar_Planilha_Inteligente (Catalogs, Prices & Products):\n   - ⚠️ CRITICAL: Se não souber o nome exato da aba, envie \"\". Leia o JSON retornado silenciosamente e invoque a ferramenta DE NOVO com a aba correta. NÃO pare para perguntar ao usuário.\n2. search_knowledge_base (RAG): ALWAYS use for Payment Rules, Policies, textual info.\n3. Document Tools: Fetch files, catalogs, deep product data (colors, numbers, prices).\n4. Consultar_IBGE: Get official list of cities inside a State (UF).\n5. Consultar_Leads_Oporttuna: Find physical companies. ONLY call for authorized territories.\n\n## CORE BEHAVIOR & SAMEKA RULES\n1. CITY/REGION = SALES ROUTE: Any city/state mentioned means the user wants a PHYSICAL SALES ITINERARY. Never refuse.\n2. NO INVENTED DATA: If asked about catalogs/prices/models, use tools silently. Do NOT invent.\n3. LEAD QUALITY FILTER: \n   - ✅ INCLUDE: Boutiques infantis, lojas de bebê, lojas de calçados infantis, lojas premium.\n   - ❌ EXCLUDE: Concessionárias, oficinas, restaurantes, escritórios, etc.\n4. PRODUCT & STORE MATCHING: Sameka sells 100% leather, premium baby shoes. Ignore large retail chains.\n5. THE AUTHORITY PITCH: Health (leather breathes, prevents fungi), Quality (Carmen Steffens standards), Profitability (Higher Average Ticket).\n\n## PROGRESSIVE SEARCH & DEDUPLICATION (MEMORY AWARENESS)\n1. REVIEW CONVERSATION HISTORY: Extract all \"empresa\" names from any past `sameka-leads` blocks in the current chat.\n2. EXCLUDE previously shown companies from new results.\n3. If user asks for \"mais leads\" or if valid leads < 5: INCREASE tool limit (50, 80, 100) SILENTLY. Inform user only of the result: \"Ampliei a busca para encontrar mais opções...\"\n4. If zero new leads remain, re-show previous ones flagged: \"⚠️ Empresas já sugeridas anteriormente — reforço de prioridade.\"\n\n## FORMATO DE SAÍDA — LEADS / ROTEIRO DE VISITAS (CRÍTICO PARA O FRONTEND)\nQuando sua resposta incluir leads, você DEVE usar o bloco de código com a linguagem \"sameka-leads\". NUNCA use tabelas markdown ou bullet points para leads.\n\n```sameka-leads\n[\n  {\n    \"empresa\": \"NOME DA EMPRESA LTDA\",\n    \"endereco\": \"Endereço completo\",\n    \"bairro\": \"Bairro\",\n    \"telefones\": [\"(11) 1234-5678\"],\n    \"emails\": [\"email@empresa.com\"],\n    \"redesSociais\": [\"[https://instagram.com/empresa](https://instagram.com/empresa)\"],\n    \"imagens\": [],\n    \"possuiPresencaDigital\": \"SIM ou NÃO\",\n    \"natureza\": \"Sociedade Empresária Limitada\",\n    \"matchSameka\": \"Sua avaliação de fit\",\n    \"dicaAbordagem\": \"Recomendação ESPECÍFICA com base no catálogo atual\",\n    \"score\": { \"nota\": 85, \"classificacao\": \"A\", \"descricao\": \"Alta aderência\" }\n  }\n]\n(Sempre inclua todos os campos, use [] ou null se vazio. O array deve estar dentro de um bloco de código json com a tag sameka-leads)\n\nRESPONSE TEMPLATES & STRUCTURE\nCATALOG-DRIVEN INTELLIGENCE: BEFORE rendering leads, silently fetch the catalog. Fill the \"dicaAbordagem\" inside the JSON with REAL models/prices.\n\nTEXT BOXES: Use ### para \"Inteligência sobre Produtos\" e \"Argumentos de Autoridade\" (frontend estiliza como caixas).\n\nANTI-REPETITION: Never duplicate lines. Never send identical back-to-back messages.\n\n[GREETING — FIRST MESSAGE ONLY]\nOlá, [Nome]! 👋 Sou seu Copiloto Estratégico da Sameka.\nComo posso ajudar a alavancar suas vendas hoje?\n1️⃣ Gerar um Roteiro de Vendas para sua região\n2️⃣ Consultar Catálogo (Preços, Cores, Numerações)\n3️⃣ Preparar Argumentos de Autoridade para reuniões\n\n[ITINERARY RESPONSE]\n\n🗺️ Roteiro de Oportunidades — [Cidade]\n[X] empresas encontradas na sua área de atuação.\n\n{INSERIR BLOCO sameka-leads ... }\n\n💎 Inteligência sobre Produtos e Lojas (Pré-Visita)\n[Recomendações com dados REAIS do catálogo]\n\n🧠 Argumentos de Autoridade & Negociação\n[Saúde, Qualidade e Negócio]\n\n[CATALOG QUERY RESPONSE]\n📦 Consulta de Catálogo\n\nModelo/Referência: [dados reais]\n\nCores: [dados reais]\n\nNumeração: [dados reais]\n\nPreço: [dados reais]\n\nTONE: Internal Senior Sales Strategist. Direct, professional, authoritative. Write EXCLUSIVELY in Portuguese (pt-BR)."
+        }
+      },
+      "id": "0768007a-92a8-4a7e-9160-4f5db8acafb1",
+      "name": "RAG AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -32,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "cc0dfd2e-0e24-403b-a8dc-7e1529973b55",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sameka-AgentRag",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "f6d2087b-5b55-4151-b665-e750581816c6",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        336
+      ],
+      "webhookId": "693e9c67-afca-4f79-9a88-a3f6f5972ddd"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9a9a245e-f1a1-4282-bb02-a81ffe629f0f",
+              "name": "chatInput",
+              "value": "={{ $json?.chatInput || $json.body.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "b80831d8-c653-4203-8706-adedfdb98f77",
+              "name": "sessionId",
+              "value": "={{ $json?.sessionId || $json.body.sessionId}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6fadbeb0-5f42-409a-92ca-f7ea5913f2a8",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -240,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "tableName": "sameka_chat_message"
+      },
+      "id": "84c0ef65-05a9-4425-9134-17c1fba62678",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        672
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "jFjeYH6Nt3aRNkoM",
+          "name": "Supabase_database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        352
+      ],
+      "id": "217def7b-8805-4ca6-a6ea-9f0567b15ac1",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "hZRBXrfocBn4jbFB",
+          "name": "openrouter_cloudfy"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sameka-prune-history",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a90c9fae-70d3-4d63-9761-9ac18c2a39d6",
+      "name": "PruneWebhook",
+      "position": [
+        -544,
+        848
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "webhookId": "f762ae4e-b5d4-42be-982b-e3649b2a45fd"
+    },
+    {
+      "parameters": {
+        "path": "sameka_health",
+        "options": {
+          "responseData": "={\"status\": \"ok\"}"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -576,
+        48
+      ],
+      "id": "826ed397-3a7c-4cbc-a575-de6261acc114",
+      "name": "Test Connection",
+      "webhookId": "291e54fe-5a3b-4565-9fa3-c18879fd6d28"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-opus-4-5-20251101",
+          "mode": "list",
+          "cachedResultName": "Claude Opus 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -704,
+        528
+      ],
+      "id": "70de627b-bc86-4e03-8b0a-e8e54fe69afa",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "QtnfjJCQNqP4xqWg",
+          "name": "Anthropic account Senai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Usa esta ferramenta para buscar empresas e oportunidades de negócios baseadas na cidade e estado (UF) em que o representante de vendas vai atuar. Retorna endereço, faturamento e contatos para roteirização.",
+        "workflowId": {
+          "__rl": true,
+          "value": "f9fHSVVpdi3KiG0a",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/f9fHSVVpdi3KiG0a",
+          "cachedResultName": "[Sameka] GET-Leads"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        624
+      ],
+      "id": "c66de7cb-9648-4def-ab12-a259bf89d3f3",
+      "name": "Consultar_Leads_Oporttuna"
+    },
+    {
+      "parameters": {
+        "model": "gpt-5.4-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        640
+      ],
+      "id": "4b2f4873-d868-444a-89c4-98bfe9e4ceb3",
+      "name": "Azure OpenAI Chat Model",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "xby4FSbCaCnssJxl",
+          "name": "Azure Open AI account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use esta ferramenta passando a sigla de um estado (uf) com 2 letras (ex: 'SP', 'SC', 'PR') para descobrir a lista oficial de todas as cidades que existem nele. Só use se o usuário pedir dados de um estado inteiro e você precisar saber quais cidades existem lá dentro.",
+        "workflowId": {
+          "__rl": true,
+          "value": "xqLg0YG9DvqZ4Aqz",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/xqLg0YG9DvqZ4Aqz",
+          "cachedResultName": "[Sameka]Consulta IBGE"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        704
+      ],
+      "id": "21c98892-f2c0-4840-9542-daba59e73b3f",
+      "name": "Consultar_IBGE"
+    },
+    {
+      "parameters": {
+        "description": "Use esta ferramenta SEMPRE que o usuário perguntar sobre dados de planilhas, vendas, pedidos ou relatórios numéricos.\n\nCOMO USAR ESTA FERRAMENTA (2 PASSOS):\n1. Se você NÃO SABE quais abas (separadores) existem na planilha: Envie o parâmetro 'nome_do_separador' VAZIO (\"\"). A ferramenta retornará a lista de abas disponíveis.\n2. Se você JÁ SABE a aba correta: Envie o parâmetro 'nome_do_separador' com o nome exato da aba.\n3. Se o usuário procurar um cliente ou status específico, envie também o 'termo_de_pesquisa' (ex: \"ACME\" ou \"Pendente\").",
+        "workflowId": {
+          "__rl": true,
+          "value": "Xh61nOAGor8LTYYa",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Xh61nOAGor8LTYYa",
+          "cachedResultName": "[Sameka] Sub-fluxo: Consultar Planilha Inteligente"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        464
+      ],
+      "id": "9d6474b0-4e51-4aef-9955-bf8f5b46c8a7",
+      "name": "Consultar_Planilha_Inteligente"
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        976,
+        576
+      ],
+      "id": "b0da7544-baf3-452f-a8b8-0e2568498f25",
+      "name": "Embeddings Azure OpenAI",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "I49u2rVHLKVmRWCI",
+          "name": "Azure Open AI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -496,
+        480
+      ],
+      "id": "c5f3f7f9-af9d-4683-99ae-2f2b46ead2e6",
+      "name": "When chat message received",
+      "webhookId": "3d3dd4b1-f365-42ed-a3cb-4148f8a43aa0"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Delete Edited Message": {
+      "main": [
+        [
+          {
+            "node": "PruneResponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        []
+      ]
+    },
+    "search_knowledge_base": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "List Documents": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RAG AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PruneWebhook": {
+      "main": [
+        [
+          {
+            "node": "Delete Edited Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar_Leads_Oporttuna": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Document Rows": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get File Contents": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Azure OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar_IBGE": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar_Planilha_Inteligente": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Azure OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "search_knowledge_base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e6a14e83-7ee9-4efa-bcd7-359c71db282c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "03d32a206f2d8840fce482e6c587726f18775bd9177e9401c00ca76d3086ad41"
+  },
+  "id": "fTofWsCNmyCwFjwO",
+  "tags": []
+}
