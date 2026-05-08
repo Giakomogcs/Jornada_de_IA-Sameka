@@ -1049,6 +1049,61 @@
         color: inherit;
       }
 
+      /* PRODUCT IMAGES (markdown ![](url)) */
+      .message-content img {
+        max-width: 240px;
+        max-height: 240px;
+        width: auto;
+        height: auto;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        background: var(--color-light-gray);
+        object-fit: contain;
+        display: block;
+        margin: 12px 0;
+      }
+      [data-theme="dark"] .message-content img {
+        background: #2a2a25;
+      }
+      .product-card {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+        margin: 10px 8px 10px 0;
+        background: var(--color-light-gray);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+        max-width: 260px;
+        vertical-align: top;
+      }
+      [data-theme="dark"] .product-card {
+        background: #2a2a25;
+      }
+      .product-card img {
+        width: 100%;
+        max-width: 220px;
+        max-height: 220px;
+        margin: 0;
+        border-radius: 8px;
+        background: white;
+      }
+      .product-card-caption {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        text-align: center;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+      .product-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin: 12px 0;
+      }
+
       #messageInput {
         flex: 1;
         padding: 14px 20px;
@@ -2250,6 +2305,64 @@
         color: #f87171;
       }
 
+      .lead-flag-cliente {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        background: rgba(34, 197, 94, 0.12);
+        color: #15803d;
+        border: 1px solid rgba(34, 197, 94, 0.25);
+      }
+      [data-theme="dark"] .lead-flag-cliente {
+        background: rgba(34, 197, 94, 0.18);
+        color: #4ade80;
+      }
+      .lead-flag-prospect {
+        background: rgba(140, 149, 125, 0.12);
+        color: var(--color-medium-gray);
+        border-color: rgba(140, 149, 125, 0.3);
+      }
+      [data-theme="dark"] .lead-flag-prospect {
+        background: rgba(154, 151, 126, 0.18);
+        color: #c8c5a8;
+      }
+      .lead-fonte-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        background: rgba(140, 149, 125, 0.1);
+        color: var(--color-medium-gray);
+        border: 1px solid var(--border-color);
+      }
+      .lead-fonte-badge.fonte-planilha {
+        background: rgba(154, 106, 74, 0.12);
+        color: var(--color-wine);
+        border-color: rgba(154, 106, 74, 0.25);
+      }
+      .lead-cnpj {
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+      .lead-score-top1 {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+      }
+      .lead-score-top20 {
+        background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        color: white;
+      }
+
       .sameka-info-box {
         border-radius: 12px;
         padding: 18px 20px;
@@ -3153,15 +3266,18 @@
         try {
           const uid = currentUserId || "";
           const sessionsUrlWithUser = `${SESSIONS_URL}?userId=${encodeURIComponent(uid)}`;
+          console.log("[Sameka] fetchSessions →", sessionsUrlWithUser);
           const response = await fetch(sessionsUrlWithUser, {
             cache: "no-store",
           });
 
           if (!response.ok) {
+            console.error("[Sameka] fetchSessions HTTP", response.status);
             throw new Error("Failed to fetch sessions");
           }
 
           const text = await response.text();
+          console.log("[Sameka] fetchSessions raw:", text.slice(0, 300));
           if (!text || text.trim().length === 0) {
             return [];
           }
@@ -3170,6 +3286,7 @@
           try {
             data = JSON.parse(text);
           } catch (e) {
+            console.error("[Sameka] fetchSessions JSON parse error", e);
             return [];
           }
 
@@ -3178,15 +3295,22 @@
           }
           return Array.isArray(data) ? data : [];
         } catch (error) {
+          console.error("[Sameka] fetchSessions error", error);
           return [];
         }
       }
       async function fetchHistory(sessionId) {
         try {
-          const response = await fetch(`${HISTORY_URL}?sessionId=${sessionId}`);
-          if (!response.ok) throw new Error("Failed to fetch history");
+          const url = `${HISTORY_URL}?sessionId=${sessionId}`;
+          console.log("[Sameka] fetchHistory →", url);
+          const response = await fetch(url);
+          if (!response.ok) {
+            console.error("[Sameka] fetchHistory HTTP", response.status);
+            throw new Error("Failed to fetch history");
+          }
 
           const text = await response.text();
+          console.log("[Sameka] fetchHistory raw:", text.slice(0, 300));
           if (!text || text.trim().length === 0) {
             return [];
           }
@@ -3195,6 +3319,7 @@
           try {
             data = JSON.parse(text);
           } catch (e) {
+            console.error("[Sameka] fetchHistory JSON parse error", e);
             return [];
           }
 
@@ -3234,6 +3359,7 @@
             return processedItem;
           });
         } catch (error) {
+          console.error("[Sameka] fetchHistory error", error);
           return [];
         }
       }
@@ -3566,6 +3692,10 @@
         if (cl === "A") return "lead-score-a";
         if (cl === "B") return "lead-score-b";
         if (cl === "C") return "lead-score-c";
+        if (cl.includes("TOP 1")) return "lead-score-top1";
+        if (cl.includes("TOP 20")) return "lead-score-top20";
+        if (cl.includes("PROSPECT QUALIFICADO")) return "lead-score-a";
+        if (cl.includes("OBSERVAR")) return "lead-score-c";
         return "lead-score-default";
       }
       function getSocialClass(url) {
@@ -3590,25 +3720,98 @@
         "oficina",
         "restaurante",
         "bar ",
+        "lanchonete",
+        "pizzaria",
+        "hamburgueria",
         "advocacia",
         "advogado",
         "clínica",
         "clinica",
+        "hospital",
+        "odontológic",
+        "odontologic",
         "construtora",
         "construção",
         "engenharia",
         "contabilidade",
+        "contabil",
         "açougue",
+        "acougue",
         "padaria",
         "farmácia",
         "farmacia",
+        "drogaria",
         "posto de gasolina",
         "combustível",
         "combustivel",
         "supermercado",
+        "mercado ",
+        "hortifrúti",
+        "hortifruti",
         "autopeças",
         "autopecas",
+        "transportadora",
+        "logística",
+        "logistica",
+        "imobiliária",
+        "imobiliaria",
+        "corretora",
+        "seguros",
+        "consultoria",
+        "associação",
+        "associacao",
+        "sindicato",
+        "cooperativa",
+        "condomínio",
+        "condominio",
+        "reservatório",
+        "reservatorio",
+        "metalúrgica",
+        "metalurgica",
+        "indústria ",
+        "industria ",
+        "fábrica de",
+        "fabrica de",
+        "salão de beleza",
+        "salao de beleza",
+        "barbearia",
+        "pet shop",
+        "petshop",
+        "academia",
+        "escola",
+        "colégio",
+        "colegio",
+        "igreja",
+        "templo",
+        "hotel",
+        "pousada",
+        "motel",
         "fora do perfil",
+      ];
+      const VAREJO_INFANTIL_KEYWORDS = [
+        "infantil",
+        "bebê",
+        "bebe",
+        "baby",
+        "kids",
+        "criança",
+        "crianca",
+        "calçado",
+        "calcado",
+        "sapato",
+        "vestuário",
+        "vestuario",
+        "roupa",
+        "moda",
+        "boutique",
+        "enxoval",
+        "presente",
+        "shopping",
+        "multimarca",
+        "loja",
+        "varejo",
+        "acessório",
+        "acessorio",
       ];
       function isMismatch(lead) {
         const text = (
@@ -3620,13 +3823,30 @@
           " " +
           (lead.dicaAbordagem || "")
         ).toLowerCase();
-        return MISMATCH_KEYWORDS.some((kw) => text.includes(kw));
+        if (MISMATCH_KEYWORDS.some((kw) => text.includes(kw))) return true;
+        // Sem nenhuma palavra-chave de varejo infantil/moda/calçado também é mismatch
+        const hasVarejoSignal = VAREJO_INFANTIL_KEYWORDS.some((kw) =>
+          text.includes(kw),
+        );
+        return !hasVarejoSignal;
       }
 
       function renderLeadCards(leads) {
         if (!leads || !leads.length) return "";
+        // FILTRO HARD: descarta leads sem perfil de varejo infantil/moda
+        // (segunda barreira além do prompt do agente)
+        const filtered = leads.filter((lead) => {
+          if (isMismatch(lead)) return false;
+          // Também descarta sem nenhum canal de contato
+          const noPhones = !lead.telefones || lead.telefones.length === 0;
+          const noEmails = !lead.emails || lead.emails.length === 0;
+          const noSocial = !lead.redesSociais || lead.redesSociais.length === 0;
+          if (noPhones && noEmails && noSocial) return false;
+          return true;
+        });
+        if (!filtered.length) return "";
         let html = '<div class="lead-cards-container">';
-        leads.forEach((lead, idx) => {
+        filtered.forEach((lead, idx) => {
           const hasImages = lead.imagens && lead.imagens.length > 0;
           const hasPhones = lead.telefones && lead.telefones.length > 0;
           const hasEmails = lead.emails && lead.emails.length > 0;
@@ -3634,7 +3854,7 @@
           const hasScore =
             lead.score &&
             (lead.score.nota !== null || lead.score.classificacao);
-          const mismatch = isMismatch(lead);
+          const mismatch = false; // já filtrado acima
           const presenceHtml =
             lead.possuiPresencaDigital === "SIM"
               ? '<span class="lead-presence-yes">● Digital</span>'
@@ -3642,6 +3862,17 @@
           const tagClass = mismatch
             ? "lead-match-tag tag-mismatch"
             : "lead-match-tag";
+          let flagHtml = "";
+          if (lead.flagCliente) {
+            const isCliente = /cliente/i.test(lead.flagCliente);
+            flagHtml = `<span class="lead-flag-cliente${isCliente ? "" : " lead-flag-prospect"}">${lead.flagCliente}</span>`;
+          }
+          let fonteHtml = "";
+          if (lead.fonte) {
+            const isPlanilha = /planilha/i.test(lead.fonte);
+            const fonteLabel = isPlanilha ? "📋 Planilha UF" : "🛰️ Oporttuna";
+            fonteHtml = `<span class="lead-fonte-badge${isPlanilha ? " fonte-planilha" : ""}">${fonteLabel}</span>`;
+          }
           html += `
           <div class="lead-card${mismatch ? " lead-mismatch" : ""}" data-carousel-idx="0">
               <div class="lead-card-header" onclick="this.parentElement.classList.toggle('open')">
@@ -3651,13 +3882,22 @@
                           <span class="lead-card-title">${lead.empresa || "Empresa"}</span>
                       </div>
                       <div class="lead-card-tags">
+                          ${flagHtml}
                           ${lead.matchSameka ? `<span class="${tagClass}">${mismatch ? "⚠ " : ""}${lead.matchSameka}</span>` : ""}
                           ${presenceHtml}
+                          ${fonteHtml}
                       </div>
                   </div>
                   <i data-lucide="chevron-down" class="lead-chevron" style="width:18px;height:18px"></i>
               </div>
               <div class="lead-card-body">`;
+          if (lead.cnpj) {
+            const cnpjFmt = String(lead.cnpj).replace(/\D/g, "").replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2}).*/, "$1.$2.$3/$4-$5");
+            html += `<div class="lead-section">
+                  <div class="lead-section-label"><i data-lucide="hash"></i> CNPJ</div>
+                  <div class="lead-cnpj">${cnpjFmt || lead.cnpj}</div>
+              </div>`;
+          }
           if (mismatch) {
             html += `<div class="lead-mismatch-banner">
                   <i data-lucide="alert-triangle"></i>
@@ -3786,6 +4026,70 @@
         });
       }
 
+      // Embrulha imagens de produto Sameka em cards visuais e agrupa imagens consecutivas
+      function processProductImages(container) {
+        if (!container) return;
+        const imgs = Array.from(container.querySelectorAll("img"));
+        imgs.forEach((img) => {
+          const src = img.getAttribute("src") || "";
+          const isSamekaProduct = /sameka\.nimiam\.com\.br|nimiam/i.test(src);
+          const isImage = /\.(jpe?g|png|webp|gif)(\?|$)/i.test(src);
+          if (!isSamekaProduct && !isImage) return;
+          if (img.closest(".product-card") || img.closest(".lead-carousel"))
+            return;
+
+          const card = document.createElement("span");
+          card.className = "product-card";
+          const newImg = img.cloneNode(true);
+          newImg.setAttribute("loading", "lazy");
+          newImg.setAttribute(
+            "onerror",
+            "this.parentElement.style.display='none'",
+          );
+          card.appendChild(newImg);
+          const alt = img.getAttribute("alt");
+          if (alt && alt.trim()) {
+            const cap = document.createElement("span");
+            cap.className = "product-card-caption";
+            cap.textContent = alt;
+            card.appendChild(cap);
+          }
+          const parentP = img.parentElement;
+          if (
+            parentP &&
+            parentP.tagName === "P" &&
+            parentP.children.length === 1 &&
+            !parentP.textContent.replace(img.alt || "", "").trim()
+          ) {
+            parentP.replaceWith(card);
+          } else {
+            img.replaceWith(card);
+          }
+        });
+        // Agrupa product-cards consecutivos em um grid horizontal
+        const cards = Array.from(container.querySelectorAll(".product-card"));
+        let i = 0;
+        while (i < cards.length) {
+          const group = [cards[i]];
+          let next = cards[i].nextElementSibling;
+          while (
+            next &&
+            next.classList &&
+            next.classList.contains("product-card")
+          ) {
+            group.push(next);
+            next = next.nextElementSibling;
+          }
+          if (group.length > 1 && group[0].parentNode) {
+            const grid = document.createElement("div");
+            grid.className = "product-grid";
+            group[0].parentNode.insertBefore(grid, group[0]);
+            group.forEach((c) => grid.appendChild(c));
+          }
+          i += group.length;
+        }
+      }
+
       function processInfoSections(container) {
         const headings = container.querySelectorAll("h3");
         headings.forEach((h3) => {
@@ -3867,6 +4171,7 @@
 
           processLeadBlocks(content);
           processInfoSections(content);
+          processProductImages(content);
         } else {
           if (message.file) {
           } else {
@@ -4271,6 +4576,7 @@
 
               processLeadBlocks(contentDiv);
               processInfoSections(contentDiv);
+              processProductImages(contentDiv);
 
               elements.messagesContainer.scrollTop =
                 elements.messagesContainer.scrollHeight;
@@ -4291,6 +4597,7 @@
             });
             processLeadBlocks(contentDiv);
             processInfoSections(contentDiv);
+            processProductImages(contentDiv);
           }
         } else if (messageDiv) {
           contentDiv.innerHTML += marked.parse(

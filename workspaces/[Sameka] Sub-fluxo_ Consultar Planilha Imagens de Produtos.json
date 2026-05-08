@@ -1,0 +1,228 @@
+{
+  "name": "[Sameka] Sub-fluxo: Consultar Planilha Imagens de Produtos",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "508c7d91-3d6e-4e20-b004-e3196b15625a",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🛠️ Configuração da Pesquisa Inteligente:\n\n1. Clique no nó **Google Sheets** e coloque a sua credencial e selecione o ficheiro correto na opção \"Document\".\n2. Note que a opção \"Sheet\" (Separador) tem uma expressão `={{ $json.nome_do_separador }}`. Isto significa que o Agente é que decide qual aba abrir com base na pergunta do utilizador!\n3. O nó de **Código** vai procurar na folha inteira apenas as linhas que correspondam ao que o Agente quer saber, devolvendo um resumo limpo.",
+        "height": 240,
+        "width": 640,
+        "color": 6
+      },
+      "id": "79473e18-d6e0-4ecb-a602-6f5c32341492",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cf6c4293-2782-4113-a4f6-5a41dfa70ec8",
+              "leftValue": "={{ $json.nome_do_separador }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "36e27d2b-6c0a-4727-80b1-9486833bcd58",
+              "leftValue": "={{ $json.query }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "97c2ef48-fb29-4ba3-97b7-2508ecbef2d0",
+      "name": "Tem nome da aba?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Dn-pOB7xL5DFHyaiWPo33nXLb6e9LUslAWOr_oTdw5c",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $json.query }}",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "2a770abd-2e1e-49b9-ac41-1313131311d0",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        464,
+        320
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Y2LZELFEeUCjAV5U",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1Dn-pOB7xL5DFHyaiWPo33nXLb6e9LUslAWOr_oTdw5c?fields=sheets.properties.title",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3914239d-1299-45cd-b0b5-eacfdaa1c1f9",
+      "name": "Listar Abas API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        464,
+        608
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Y2LZELFEeUCjAV5U",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const abas = $input.first().json.sheets.map(s => s.properties.title);\nreturn [{\n  json: {\n    aviso_para_a_ia: \"Você não especificou o nome da aba. Aqui estão as abas disponíveis. Chame esta ferramenta novamente usando um destes nomes no parâmetro 'nome_do_separador'.\",\n    abas_disponiveis: abas\n  }\n}];"
+      },
+      "id": "a7f9b57e-2e9d-4161-bec3-c7de6a2ec5d4",
+      "name": "Formatar Lista de Abas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Recebe o termo de pesquisa enviado pelo Agente de IA\nconst triggerData = $('Execute Workflow Trigger').first().json;\nconst termoBusca = (triggerData.termo_de_pesquisa || '').toLowerCase().trim();\n\nlet resultados = [];\n\n// Palavras genéricas que a IA costuma inventar. Se ela mandar isso, ignoramos o filtro.\nconst termosGenericos = ['todos', 'análise', 'analise', 'geral', 'relatório', 'relatorio'];\n\n// Se não houver busca OU for um termo genérico, devolvemos uma amostra MAIOR (ex: 150 linhas)\nif (!termoBusca || termosGenericos.includes(termoBusca)) {\n  // Pega as últimas 150 linhas (geralmente as mais recentes) para a IA analisar\n  return $input.all().slice(-150); \n}\n\n// Percorre todas as linhas lidas do Google Sheets\nfor (const item of $input.all()) {\n  const linhaTexto = JSON.stringify(item.json).toLowerCase();\n  \n  // Se a linha contiver a palavra pesquisada, guarda-a\n  if (linhaTexto.includes(termoBusca)) {\n    resultados.push(item);\n  }\n}\n\n// Devolve no máximo as 100 melhores correspondências\nreturn resultados.slice(0, 100);"
+      },
+      "id": "06b932f5-32a1-4071-a964-39357ddefbb4",
+      "name": "Filtrar Resultados para a IA1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        320
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Tem nome da aba?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tem nome da aba?": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Listar Abas API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Filtrar Resultados para a IA1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Listar Abas API": {
+      "main": [
+        [
+          {
+            "node": "Formatar Lista de Abas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9bd41e47-e072-45bd-9ddd-a01aa01da98d",
+  "meta": {
+    "instanceId": "03d32a206f2d8840fce482e6c587726f18775bd9177e9401c00ca76d3086ad41"
+  },
+  "id": "qsT7Gk15ARgTkh7H",
+  "tags": []
+}
