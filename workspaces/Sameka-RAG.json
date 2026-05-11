@@ -1381,8 +1381,24 @@
           },
           "matchingColumns": [],
           "schema": [
-            { "id": "action", "displayName": "action", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": false },
-            { "id": "file_id", "displayName": "file_id", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": false }
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
           ],
           "attemptToConvertTypes": false,
           "convertFieldsToString": false
@@ -1552,8 +1568,24 @@
           },
           "matchingColumns": [],
           "schema": [
-            { "id": "action", "displayName": "action", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": false },
-            { "id": "file_id", "displayName": "file_id", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": false }
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
           ],
           "attemptToConvertTypes": false,
           "convertFieldsToString": false

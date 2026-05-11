@@ -195,12 +195,42 @@
       "parameters": {
         "assignments": {
           "assignments": [
-            { "id": "dd000000-0000-0000-0000-00000000c001", "name": "success", "value": "={{ !$json.error }}", "type": "boolean" },
-            { "id": "dd000000-0000-0000-0000-00000000c002", "name": "action", "value": "upload", "type": "string" },
-            { "id": "dd000000-0000-0000-0000-00000000c003", "name": "file_id", "value": "={{ $json.id || '' }}", "type": "string" },
-            { "id": "dd000000-0000-0000-0000-00000000c004", "name": "file_name", "value": "={{ $json.name || $('Normalize Inputs').item.json.file_name }}", "type": "string" },
-            { "id": "dd000000-0000-0000-0000-00000000c005", "name": "file_url", "value": "={{ $json.webViewLink || '' }}", "type": "string" },
-            { "id": "dd000000-0000-0000-0000-00000000c006", "name": "error", "value": "={{ $json.error ? String($json.error.message || $json.error) : '' }}", "type": "string" }
+            {
+              "id": "dd000000-0000-0000-0000-00000000c001",
+              "name": "success",
+              "value": "={{ !$json.error }}",
+              "type": "boolean"
+            },
+            {
+              "id": "dd000000-0000-0000-0000-00000000c002",
+              "name": "action",
+              "value": "upload",
+              "type": "string"
+            },
+            {
+              "id": "dd000000-0000-0000-0000-00000000c003",
+              "name": "file_id",
+              "value": "={{ $json.id || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "dd000000-0000-0000-0000-00000000c004",
+              "name": "file_name",
+              "value": "={{ $json.name || $('Normalize Inputs').item.json.file_name }}",
+              "type": "string"
+            },
+            {
+              "id": "dd000000-0000-0000-0000-00000000c005",
+              "name": "file_url",
+              "value": "={{ $json.webViewLink || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "dd000000-0000-0000-0000-00000000c006",
+              "name": "error",
+              "value": "={{ $json.error ? String($json.error.message || $json.error) : '' }}",
+              "type": "string"
+            }
           ]
         },
         "options": {}
@@ -215,10 +245,30 @@
       "parameters": {
         "assignments": {
           "assignments": [
-            { "id": "dd000000-0000-0000-0000-00000000d001", "name": "success", "value": "={{ !$json.error }}", "type": "boolean" },
-            { "id": "dd000000-0000-0000-0000-00000000d002", "name": "action", "value": "delete", "type": "string" },
-            { "id": "dd000000-0000-0000-0000-00000000d003", "name": "file_id", "value": "={{ $('Normalize Inputs').item.json.file_id }}", "type": "string" },
-            { "id": "dd000000-0000-0000-0000-00000000d004", "name": "error", "value": "={{ $json.error ? String($json.error.message || $json.error) : '' }}", "type": "string" }
+            {
+              "id": "dd000000-0000-0000-0000-00000000d001",
+              "name": "success",
+              "value": "={{ !$json.error }}",
+              "type": "boolean"
+            },
+            {
+              "id": "dd000000-0000-0000-0000-00000000d002",
+              "name": "action",
+              "value": "delete",
+              "type": "string"
+            },
+            {
+              "id": "dd000000-0000-0000-0000-00000000d003",
+              "name": "file_id",
+              "value": "={{ $('Normalize Inputs').item.json.file_id }}",
+              "type": "string"
+            },
+            {
+              "id": "dd000000-0000-0000-0000-00000000d004",
+              "name": "error",
+              "value": "={{ $json.error ? String($json.error.message || $json.error) : '' }}",
+              "type": "string"
+            }
           ]
         },
         "options": {}
@@ -233,8 +283,18 @@
       "parameters": {
         "assignments": {
           "assignments": [
-            { "id": "dd000000-0000-0000-0000-00000000e001", "name": "success", "value": false, "type": "boolean" },
-            { "id": "dd000000-0000-0000-0000-00000000e002", "name": "error", "value": "Invalid action. Use 'upload' or 'delete'.", "type": "string" }
+            {
+              "id": "dd000000-0000-0000-0000-00000000e001",
+              "name": "success",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "dd000000-0000-0000-0000-00000000e002",
+              "name": "error",
+              "value": "Invalid action. Use 'upload' or 'delete'.",
+              "type": "string"
+            }
           ]
         },
         "options": {}
@@ -262,10 +322,14 @@
       ]
     },
     "Drive: Upload File": {
-      "main": [[{ "node": "Build Upload Response", "type": "main", "index": 0 }]]
+      "main": [
+        [{ "node": "Build Upload Response", "type": "main", "index": 0 }]
+      ]
     },
     "Drive: Delete File": {
-      "main": [[{ "node": "Build Delete Response", "type": "main", "index": 0 }]]
+      "main": [
+        [{ "node": "Build Delete Response", "type": "main", "index": 0 }]
+      ]
     }
   },
   "meta": {
