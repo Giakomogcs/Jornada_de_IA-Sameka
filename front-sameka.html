@@ -2497,7 +2497,10 @@
                 title="Gerenciar Documentos do RAG"
                 data-admin-only
               >
-                <i data-lucide="folder-open" style="width: 14px; height: 14px"></i>
+                <i
+                  data-lucide="folder-open"
+                  style="width: 14px; height: 14px"
+                ></i>
                 <span>Documentos</span>
               </button>
               <button
@@ -2846,7 +2849,10 @@
                 id="ragDocsBackBtn"
                 title="Voltar ao chat"
               >
-                <i data-lucide="arrow-left" style="width: 18px; height: 18px"></i>
+                <i
+                  data-lucide="arrow-left"
+                  style="width: 18px; height: 18px"
+                ></i>
               </button>
               <h2
                 style="
@@ -2880,7 +2886,10 @@
                   padding: 8px 12px;
                 "
               >
-                <i data-lucide="refresh-cw" style="width: 14px; height: 14px"></i>
+                <i
+                  data-lucide="refresh-cw"
+                  style="width: 14px; height: 14px"
+                ></i>
               </button>
               <button
                 class="btn-modal btn-cancel"
@@ -4052,7 +4061,10 @@
           // Mesmo sem telefone/email/redes, eles devem ser exibidos
           // (o representante visita fisicamente usando o endereço).
           const fonte = String(lead.fonte || "").toLowerCase();
-          const isCurada = fonte.includes("planilha") || fonte.includes("rag") || fonte.includes("sameka");
+          const isCurada =
+            fonte.includes("planilha") ||
+            fonte.includes("rag") ||
+            fonte.includes("sameka");
           if (isCurada) return true;
           // Para leads da Oporttuna (API externa), exige ao menos 1 canal de contato
           const noPhones = !lead.telefones || lead.telefones.length === 0;
@@ -5806,7 +5818,11 @@
             let parsed = text && text.trim().length > 0 ? JSON.parse(text) : [];
             // Defensivo: se vier double-encoded (string JSON dentro de string), refaz o parse.
             for (let i = 0; i < 3 && typeof parsed === "string"; i++) {
-              try { parsed = JSON.parse(parsed); } catch (_) { break; }
+              try {
+                parsed = JSON.parse(parsed);
+              } catch (_) {
+                break;
+              }
             }
             console.log("[ragDocs] parsed response:", parsed);
             // Webhook n8n pode devolver vários formatos:
@@ -5816,7 +5832,9 @@
             //   [{ json: { docs:[...] }}] (raw items)
             // Estratégia: procura recursivamente um array cujos itens tenham `id` ou `title`.
             const looksLikeDoc = (o) =>
-              o && typeof o === "object" && !Array.isArray(o) &&
+              o &&
+              typeof o === "object" &&
+              !Array.isArray(o) &&
               ("id" in o || "title" in o || "file_id" in o);
             const findDocsArray = (v, depth = 0) => {
               if (depth > 6 || v == null) return null;
@@ -5833,7 +5851,14 @@
               }
               if (typeof v === "object") {
                 // Chaves prioritárias
-                for (const key of ["docs", "data", "json", "body", "result", "items"]) {
+                for (const key of [
+                  "docs",
+                  "data",
+                  "json",
+                  "body",
+                  "result",
+                  "items",
+                ]) {
                   if (key in v) {
                     const found = findDocsArray(v[key], depth + 1);
                     if (found) return found;
@@ -5855,7 +5880,8 @@
           }
           // Filtra só docs globais (sem session_id) — anexos de chat não aparecem aqui.
           docs = docs.filter(
-            (d) => !d.session_id || d.session_id === "" || d.session_id === null,
+            (d) =>
+              !d.session_id || d.session_id === "" || d.session_id === null,
           );
           if (countEl) countEl.textContent = "(" + docs.length + ")";
           tbody.innerHTML = "";
@@ -5969,26 +5995,22 @@
         if (msg && message) msg.textContent = message;
         if (overlay) overlay.style.display = "flex";
         // Desabilita botões enquanto processa
-        [
-          "ragDocUploadBtn",
-          "ragDocsRefreshBtn",
-          "ragPurgeAllBtn",
-        ].forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.disabled = true;
-        });
+        ["ragDocUploadBtn", "ragDocsRefreshBtn", "ragPurgeAllBtn"].forEach(
+          (id) => {
+            const el = document.getElementById(id);
+            if (el) el.disabled = true;
+          },
+        );
       }
       function hideRagBusy() {
         const overlay = document.getElementById("ragDocsBusyOverlay");
         if (overlay) overlay.style.display = "none";
-        [
-          "ragDocUploadBtn",
-          "ragDocsRefreshBtn",
-          "ragPurgeAllBtn",
-        ].forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.disabled = false;
-        });
+        ["ragDocUploadBtn", "ragDocsRefreshBtn", "ragPurgeAllBtn"].forEach(
+          (id) => {
+            const el = document.getElementById(id);
+            if (el) el.disabled = false;
+          },
+        );
       }
 
       const manageRagDocsBtn = document.getElementById("manageRagDocsBtn");
@@ -6044,7 +6066,10 @@
             payload = text ? JSON.parse(text) : {};
           } catch (e) {}
           const count = payload.deleted_count ?? "?";
-          setStatus(`Base limpa. ${count} documento(s) removido(s).`, "success");
+          setStatus(
+            `Base limpa. ${count} documento(s) removido(s).`,
+            "success",
+          );
           await loadRagDocs();
         } catch (err) {
           setStatus("Erro ao apagar a base.", "error");
