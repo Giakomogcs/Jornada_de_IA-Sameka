@@ -1761,8 +1761,13 @@
 
       .footer-actions {
         display: flex;
+        flex-wrap: wrap;
         gap: 8px;
         margin-top: 12px;
+      }
+
+      .footer-actions .footer-btn-full {
+        flex: 1 1 100%;
       }
 
       .footer-btn {
@@ -2487,6 +2492,15 @@
             </div>
             <div class="footer-actions">
               <button
+                class="footer-btn footer-btn-full"
+                id="manageRagDocsBtn"
+                title="Gerenciar Documentos do RAG"
+                data-admin-only
+              >
+                <i data-lucide="folder-open" style="width: 14px; height: 14px"></i>
+                <span>Documentos</span>
+              </button>
+              <button
                 class="footer-btn"
                 id="manageUsersBtn"
                 title="Gerenciar Usuários"
@@ -2494,15 +2508,6 @@
               >
                 <i data-lucide="users" style="width: 14px; height: 14px"></i>
                 <span>Usuários</span>
-              </button>
-              <button
-                class="footer-btn"
-                id="manageRagDocsBtn"
-                title="Gerenciar Documentos do RAG"
-                data-admin-only
-              >
-                <i data-lucide="folder-open" style="width: 14px; height: 14px"></i>
-                <span>Documentos</span>
               </button>
               <button
                 class="footer-btn"
@@ -2879,21 +2884,6 @@
               </button>
               <button
                 class="btn-modal btn-cancel"
-                id="ragReprocessAllBtn"
-                title="Forçar reindexação de todos os documentos (mantém arquivos)"
-                style="
-                  display: inline-flex;
-                  align-items: center;
-                  gap: 6px;
-                  font-size: 13px;
-                  padding: 8px 12px;
-                "
-              >
-                <i data-lucide="rotate-cw" style="width: 14px; height: 14px"></i>
-                Reprocessar tudo
-              </button>
-              <button
-                class="btn-modal btn-cancel"
                 id="ragPurgeAllBtn"
                 title="Apagar TODOS os documentos do RAG"
                 style="
@@ -3128,7 +3118,6 @@
       const RAG_DOCS_LIST_URL = `${API_BASE}/sameka-rag-docs`;
       const RAG_DOCS_DELETE_URL = `${API_BASE}/sameka-rag-doc-delete`;
       const RAG_PURGE_URL = `${API_BASE}/sameka-rag-purge-all`;
-      const RAG_REPROCESS_URL = `${API_BASE}/sameka-rag-reprocess-all`;
 
       let currentSessionId = null;
       let sessions = [];
@@ -5984,7 +5973,6 @@
           "ragDocUploadBtn",
           "ragDocsRefreshBtn",
           "ragPurgeAllBtn",
-          "ragReprocessAllBtn",
         ].forEach((id) => {
           const el = document.getElementById(id);
           if (el) el.disabled = true;
@@ -5997,7 +5985,6 @@
           "ragDocUploadBtn",
           "ragDocsRefreshBtn",
           "ragPurgeAllBtn",
-          "ragReprocessAllBtn",
         ].forEach((id) => {
           const el = document.getElementById(id);
           if (el) el.disabled = false;
@@ -6066,35 +6053,9 @@
         }
       }
 
-      async function reprocessAllRagDocs() {
-        const ok = window.confirm(
-          "Forçar reindexação de TODOS os documentos do RAG?\n\n• Os arquivos no Drive são mantidos.\n• Os vetores serão apagados e recriados no próximo scan automático do Drive (ou ao rodar o workflow manualmente).\n\nIsso é útil se você mudou o modelo de embeddings ou a forma de chunking.",
-        );
-        if (!ok) return;
-        try {
-          showRagBusy("Marcando documentos para reprocessamento...");
-          setStatus("Marcando documentos para reprocessamento...", "warning");
-          const resp = await fetch(RAG_REPROCESS_URL, { method: "POST" });
-          if (!resp.ok) throw new Error("reprocess failed");
-          setStatus(
-            "Reprocessamento agendado. Rode o workflow do Drive para reindexar.",
-            "success",
-          );
-          await loadRagDocs();
-        } catch (err) {
-          setStatus("Erro ao agendar reprocessamento.", "error");
-        } finally {
-          hideRagBusy();
-        }
-      }
-
       const ragPurgeAllBtn = document.getElementById("ragPurgeAllBtn");
       if (ragPurgeAllBtn) {
         ragPurgeAllBtn.addEventListener("click", purgeAllRagDocs);
-      }
-      const ragReprocessAllBtn = document.getElementById("ragReprocessAllBtn");
-      if (ragReprocessAllBtn) {
-        ragReprocessAllBtn.addEventListener("click", reprocessAllRagDocs);
       }
 
       const userForm2 = document.getElementById("userForm2");

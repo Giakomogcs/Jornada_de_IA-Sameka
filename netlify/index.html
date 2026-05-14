@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <!--netlify-no-optimize-->
@@ -425,12 +425,14 @@
         transition: all 0.2s;
       }
 
-      .btn-attach, .btn-mic {
+      .btn-attach,
+      .btn-mic {
         background: #f0f0f0;
         color: #666;
       }
 
-      .btn-attach:hover, .btn-mic:hover {
+      .btn-attach:hover,
+      .btn-mic:hover {
         background: #e0e0e0;
         color: var(--color-primary);
       }
@@ -530,8 +532,7 @@
         background: var(--color-primary);
       }
 
-           SKELETON LOADERS
-      .skeleton {
+      SKELETON LOADERS .skeleton {
         background: linear-gradient(
           90deg,
           #e0e0e0 25%,
@@ -830,6 +831,61 @@
         background: transparent;
         padding: 0;
         color: inherit;
+      }
+
+      /* PRODUCT IMAGES (markdown ![](url)) */
+      .message-content img {
+        max-width: 240px;
+        max-height: 240px;
+        width: auto;
+        height: auto;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        background: var(--color-light-gray);
+        object-fit: contain;
+        display: block;
+        margin: 12px 0;
+      }
+      [data-theme="dark"] .message-content img {
+        background: #2a2a25;
+      }
+      .product-card {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+        margin: 10px 8px 10px 0;
+        background: var(--color-light-gray);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+        max-width: 260px;
+        vertical-align: top;
+      }
+      [data-theme="dark"] .product-card {
+        background: #2a2a25;
+      }
+      .product-card img {
+        width: 100%;
+        max-width: 220px;
+        max-height: 220px;
+        margin: 0;
+        border-radius: 8px;
+        background: white;
+      }
+      .product-card-caption {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        text-align: center;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+      .product-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin: 12px 0;
       }
 
       #messageInput {
@@ -1489,8 +1545,13 @@
 
       .footer-actions {
         display: flex;
+        flex-wrap: wrap;
         gap: 8px;
         margin-top: 12px;
+      }
+
+      .footer-actions .footer-btn-full {
+        flex: 1 1 100%;
       }
 
       .footer-btn {
@@ -1578,8 +1639,7 @@
         }
       }
 
-           LEAD CARDS — Rich Itinerary Components
-      .lead-cards-container {
+      LEAD CARDS — Rich Itinerary Components .lead-cards-container {
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -2034,6 +2094,64 @@
         color: #f87171;
       }
 
+      .lead-flag-cliente {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        background: rgba(34, 197, 94, 0.12);
+        color: #15803d;
+        border: 1px solid rgba(34, 197, 94, 0.25);
+      }
+      [data-theme="dark"] .lead-flag-cliente {
+        background: rgba(34, 197, 94, 0.18);
+        color: #4ade80;
+      }
+      .lead-flag-prospect {
+        background: rgba(140, 149, 125, 0.12);
+        color: var(--color-medium-gray);
+        border-color: rgba(140, 149, 125, 0.3);
+      }
+      [data-theme="dark"] .lead-flag-prospect {
+        background: rgba(154, 151, 126, 0.18);
+        color: #c8c5a8;
+      }
+      .lead-fonte-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        background: rgba(140, 149, 125, 0.1);
+        color: var(--color-medium-gray);
+        border: 1px solid var(--border-color);
+      }
+      .lead-fonte-badge.fonte-planilha {
+        background: rgba(154, 106, 74, 0.12);
+        color: var(--color-wine);
+        border-color: rgba(154, 106, 74, 0.25);
+      }
+      .lead-cnpj {
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+      .lead-score-top1 {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+      }
+      .lead-score-top20 {
+        background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        color: white;
+      }
+
       .sameka-info-box {
         border-radius: 12px;
         padding: 18px 20px;
@@ -2157,6 +2275,15 @@
               </div>
             </div>
             <div class="footer-actions">
+              <button
+                class="footer-btn footer-btn-full"
+                id="manageRagDocsBtn"
+                title="Gerenciar Documentos do RAG"
+                data-admin-only
+              >
+                <i data-lucide="folder-open" style="width: 14px; height: 14px"></i>
+                <span>Documentos</span>
+              </button>
               <button
                 class="footer-btn"
                 id="manageUsersBtn"
@@ -2480,6 +2607,197 @@
                 </div>
               </form>
             </div>
+          </div>
+        </section>
+
+        <!-- RAG DOCS PAGE (admin only) -->
+        <section
+          id="ragDocsPage"
+          style="
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg-chat);
+            grid-column: 2;
+            grid-row: 1;
+            position: relative;
+          "
+        >
+          <div class="users-page-header">
+            <div style="display: flex; align-items: center; gap: 12px">
+              <button
+                class="users-back-btn"
+                id="ragDocsBackBtn"
+                title="Voltar ao chat"
+              >
+                <i data-lucide="arrow-left" style="width: 18px; height: 18px"></i>
+              </button>
+              <h2
+                style="
+                  margin: 0;
+                  font-size: 1.3rem;
+                  font-weight: 700;
+                  color: var(--text-primary);
+                "
+              >
+                Documentos do RAG
+                <span
+                  id="ragDocsCount"
+                  style="
+                    font-size: 13px;
+                    color: var(--text-secondary);
+                    font-weight: 400;
+                  "
+                ></span>
+              </h2>
+            </div>
+            <div style="display: flex; gap: 8px">
+              <button
+                class="btn-modal btn-cancel"
+                id="ragDocsRefreshBtn"
+                title="Recarregar lista"
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 6px;
+                  font-size: 13px;
+                  padding: 8px 12px;
+                "
+              >
+                <i data-lucide="refresh-cw" style="width: 14px; height: 14px"></i>
+              </button>
+              <button
+                class="btn-modal btn-cancel"
+                id="ragPurgeAllBtn"
+                title="Apagar TODOS os documentos do RAG"
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 6px;
+                  font-size: 13px;
+                  padding: 8px 12px;
+                  background: #dc2626;
+                  color: #fff;
+                "
+              >
+                <i data-lucide="trash" style="width: 14px; height: 14px"></i>
+                Apagar tudo
+              </button>
+              <button
+                class="btn-modal btn-confirm"
+                id="ragDocUploadBtn"
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 6px;
+                  font-size: 13px;
+                  padding: 8px 16px;
+                "
+              >
+                <i data-lucide="upload" style="width: 14px; height: 14px"></i>
+                Adicionar Documento
+              </button>
+              <input type="file" id="ragDocFileInput" style="display: none" />
+            </div>
+          </div>
+
+          <!-- Overlay para operações longas (upload/delete/purge/reprocess) -->
+          <div
+            id="ragDocsBusyOverlay"
+            style="
+              display: none;
+              position: absolute;
+              inset: 0;
+              background: rgba(255, 255, 255, 0.85);
+              backdrop-filter: blur(2px);
+              z-index: 10;
+              align-items: center;
+              justify-content: center;
+              flex-direction: column;
+              gap: 12px;
+              padding: 24px;
+              text-align: center;
+            "
+          >
+            <div
+              style="
+                width: 48px;
+                height: 48px;
+                border: 4px solid var(--color-primary);
+                border-top-color: transparent;
+                border-radius: 50%;
+                animation: ragSpin 1s linear infinite;
+              "
+            ></div>
+            <div
+              id="ragDocsBusyMessage"
+              style="
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--text-primary);
+                max-width: 480px;
+              "
+            >
+              Processando...
+            </div>
+            <div
+              style="
+                font-size: 12px;
+                color: var(--text-secondary);
+                max-width: 480px;
+              "
+            >
+              Não feche esta janela. A operação pode demorar alguns minutos.
+            </div>
+          </div>
+          <style>
+            @keyframes ragSpin {
+              to {
+                transform: rotate(360deg);
+              }
+            }
+          </style>
+
+          <div class="users-page-body">
+            <div
+              id="ragDocsLoading"
+              style="
+                display: none;
+                text-align: center;
+                padding: 40px;
+                color: var(--text-secondary);
+              "
+            >
+              <div style="font-size: 2rem; margin-bottom: 8px">⏳</div>
+              Carregando documentos...
+            </div>
+            <div
+              id="ragDocsEmpty"
+              style="
+                display: none;
+                text-align: center;
+                padding: 40px;
+                color: var(--text-secondary);
+              "
+            >
+              <div style="font-size: 2rem; margin-bottom: 8px">📁</div>
+              Nenhum documento na base de conhecimento.<br />
+              Clique em <strong>Adicionar Documento</strong> para começar.
+            </div>
+            <table
+              id="ragDocsTable"
+              style="width: 100%; border-collapse: collapse; display: none"
+            >
+              <thead>
+                <tr>
+                  <th class="users-th">Título</th>
+                  <th class="users-th">Origem</th>
+                  <th class="users-th">Última indexação</th>
+                  <th class="users-th" style="text-align: right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="ragDocsTableBody"></tbody>
+            </table>
           </div>
         </section>
       </div>
