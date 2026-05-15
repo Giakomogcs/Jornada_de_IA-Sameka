@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "edit|create",
+        "type": "command",
+        "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File .github/hooks/check-dangerous-patterns.ps1",
+        "timeout": 10
+      }
+    ]
+  }
+}
