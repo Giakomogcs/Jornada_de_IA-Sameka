@@ -25,4 +25,4 @@ node_modules/
 .env.*
 
 # ===== Skills internos (Copilot) =====
-.github/skills/
+#.github/skills/
