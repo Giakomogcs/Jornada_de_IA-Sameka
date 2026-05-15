@@ -1,5 +1,4 @@
 {
-  "name": "Sameka-RAG",
   "nodes": [
     {
       "parameters": {
@@ -20,11 +19,11 @@
           }
         }
       },
-      "id": "effa2d79-400c-468c-9fa3-d6e65e6b5c1a",
+      "id": "14b16c84-8657-4a0b-b988-eefe50fb4bad",
       "name": "Default Data Loader",
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1,
-      "position": [5968, 640]
+      "position": [9200, -1616]
     },
     {
       "parameters": {
@@ -33,11 +32,11 @@
         "width": 3809,
         "color": 5
       },
-      "id": "e25397b2-08d0-447a-a285-186e9d81e946",
+      "id": "eae1740c-e3ea-4430-a610-2219d1c4876d",
       "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [2736, 0]
+      "position": [5968, -2256]
     },
     {
       "parameters": {
@@ -55,11 +54,11 @@
           }
         }
       },
-      "id": "424628be-ca55-4ffb-a510-29e2fdc5bbd9",
+      "id": "b5b49ade-867b-44e6-8a67-f551f38e4ce3",
       "name": "Download File",
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
-      "position": [4560, 368],
+      "position": [7792, -1888],
       "executeOnce": true,
       "retryOnFail": true,
       "maxTries": 2,
@@ -75,11 +74,11 @@
         "operation": "text",
         "options": {}
       },
-      "id": "bdd98c88-b794-4236-b38a-56dfd234da0b",
+      "id": "7e9e06af-86b7-4d2d-8d85-7b76a2aa6dc6",
       "name": "Extract Document Text",
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
-      "position": [5232, 672],
+      "position": [8464, -1584],
       "alwaysOutputData": true
     },
     {
@@ -87,30 +86,30 @@
         "operation": "pdf",
         "options": {}
       },
-      "id": "1a594fc6-e1cc-4d0a-ad3a-b864fefffb57",
+      "id": "613be47c-5852-4264-add2-714036e3b030",
       "name": "Extract PDF Text",
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
-      "position": [5232, 112]
+      "position": [8464, -2144]
     },
     {
       "parameters": {
         "aggregate": "aggregateAllItemData",
         "options": {}
       },
-      "id": "5b4c4dbc-44c5-4777-9780-25625d1d6b60",
+      "id": "45d20603-0320-4578-8637-261a12fd1592",
       "name": "Aggregate",
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
-      "position": [5264, 288]
+      "position": [8496, -1968]
     },
     {
       "parameters": {},
-      "id": "f24e4eed-d641-4699-998d-0b25ba0c94e3",
+      "id": "eed9ea6f-bc1e-475f-8708-0e135d3dbf54",
       "name": "Character Text Splitter",
       "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
       "typeVersion": 1,
-      "position": [5936, 784]
+      "position": [9168, -1472]
     },
     {
       "parameters": {
@@ -124,11 +123,11 @@
         },
         "options": {}
       },
-      "id": "cc963049-8069-485c-bb8c-0888f8af1833",
+      "id": "f4adc0c4-b905-4e93-90b3-7879025b114f",
       "name": "Summarize",
       "type": "n8n-nodes-base.summarize",
       "typeVersion": 1,
-      "position": [5472, 368]
+      "position": [8704, -1888]
     },
     {
       "parameters": {
@@ -230,11 +229,11 @@
           "fallbackOutput": 3
         }
       },
-      "id": "10db9ae5-75fa-4055-a80f-80c4cac32ab9",
+      "id": "a23c5358-5f1e-49e6-8011-e82efe9b824a",
       "name": "Switch",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
-      "position": [4736, 336]
+      "position": [7968, -1920]
     },
     {
       "parameters": {
@@ -246,14 +245,14 @@
           "cachedResultName": "sameka_documents"
         },
         "options": {
-          "queryName": "match_documents"
+          "queryName": "sameka_match_documents"
         }
       },
-      "id": "d4c4c4f4-6a92-4d52-9e06-0705b1092d9f",
+      "id": "1487f05b-55e3-4bf1-9c94-dfd2c25c1620",
       "name": "Insert into Supabase Vectorstore",
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1,
-      "position": [5952, 432],
+      "position": [9184, -1824],
       "credentials": {
         "supabaseApi": {
           "id": "i5Q8tj8Pyc9XjSGd",
@@ -266,11 +265,11 @@
         "operation": "xlsx",
         "options": {}
       },
-      "id": "19136887-c0c0-4b10-a2db-3edb9f45d9cc",
+      "id": "d0b9550f-4554-405c-a5b9-68c0147ec537",
       "name": "Extract from Excel",
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
-      "position": [5056, 288]
+      "position": [8288, -1968]
     },
     {
       "parameters": {
@@ -294,8 +293,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [5712, 160],
-      "id": "3cc755e2-d57a-4528-95c2-0561adcda4fe",
+      "position": [8944, -2096],
+      "id": "a6b498d2-a0ff-4244-80a3-d4bfc249ee7e",
       "name": "Set Schema"
     },
     {
@@ -304,8 +303,8 @@
       },
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
-      "position": [5056, 464],
-      "id": "0be2cc49-0d47-4946-996a-8adc1514c090",
+      "position": [8288, -1792],
+      "id": "29d57cdd-84d7-4bc7-bb36-f458951b68c7",
       "name": "Extract from CSV"
     },
     {
@@ -316,8 +315,8 @@
       },
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
-      "position": [3184, 320],
-      "id": "2a28a62f-a31d-41eb-9ca8-983767caf886",
+      "position": [6416, -1936],
+      "id": "c3b9c2bc-7eeb-499a-910d-731182e0fae9",
       "name": "Loop Over Items"
     },
     {
@@ -336,8 +335,8 @@
       },
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [4192, 464],
-      "id": "473563f7-83ad-413e-9846-314f87174a46",
+      "position": [7424, -1792],
+      "id": "1138e534-af6a-4abf-820c-55b2da54808c",
       "name": "Delete Old Data Rows",
       "alwaysOutputData": true,
       "executeOnce": true,
@@ -405,8 +404,8 @@
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [5264, 464],
-      "id": "d834f0d1-2447-4309-976c-3206c20850fa",
+      "position": [8496, -1792],
+      "id": "70eeee17-632f-48b5-b0db-64934c5af4f3",
       "name": "Insert Table Rows",
       "credentials": {
         "postgres": {
@@ -494,8 +493,8 @@
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [5936, 160],
-      "id": "a7b0d54a-f751-4fa0-9bb0-54c81f67417c",
+      "position": [9168, -2096],
+      "id": "c60c9df8-8209-43c0-aaa8-fa7b16eff41a",
       "name": "Update Schema for Document Metadata",
       "credentials": {
         "postgres": {
@@ -512,9 +511,9 @@
         "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [0, 0],
+      "position": [3232, -2256],
       "typeVersion": 1,
-      "id": "5a881bce-a1b0-497f-87a2-872209ffa07d",
+      "id": "54e54a67-04b3-4e8e-822e-d8fce5a00f58",
       "name": "Sticky Note9"
     },
     {
@@ -534,8 +533,8 @@
       },
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
-      "position": [2976, 240],
-      "id": "ddf7db74-cd29-48dc-9905-a60a9141cfa7",
+      "position": [6208, -2016],
+      "id": "aa818dcb-7041-42c2-9ed8-2b28b073005b",
       "name": "Search files and folders",
       "retryOnFail": true,
       "maxTries": 2,
@@ -554,8 +553,8 @@
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
-      "position": [4000, 208],
-      "id": "4bd94677-ad4f-4572-8cd2-acf600124a2d",
+      "position": [7232, -2048],
+      "id": "17f9ce59-a04e-403f-a936-aa236d3e2bd7",
       "name": "Delete Old Doc Rows1",
       "credentials": {
         "postgres": {
@@ -582,8 +581,8 @@
       },
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
-      "position": [2960, 496],
-      "id": "257aff60-b546-4d43-bd56-734772429ec2",
+      "position": [6192, -1760],
+      "id": "ee94f20b-c063-4b30-8ec8-98a0b83a3458",
       "name": "Upload file",
       "credentials": {
         "googleDriveOAuth2Api": {
@@ -603,8 +602,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [2784, 496],
-      "id": "ca62f4fd-41d2-45ff-82e3-1e5162dc01ac",
+      "position": [6016, -1760],
+      "id": "d4a79e96-3fb4-4fab-8a58-a99ffcf5d513",
       "name": "InsertFile-drive",
       "webhookId": "f9870744-c0e5-422a-9346-036341f2765a"
     },
@@ -615,11 +614,11 @@
         "width": 863,
         "color": 3
       },
-      "id": "51ea82d3-f8dd-4431-9c04-3c61e2274b50",
+      "id": "c8fc43db-b522-451b-88d8-5664a8035814",
       "name": "Sticky Note Setup",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [1856, 16]
+      "position": [5088, -2240]
     },
     {
       "parameters": {
@@ -627,11 +626,11 @@
         "query": "-- ✅ SETUP IDEMPOTENTE — Não destrói dados.\n-- Tabelas de USUÁRIOS / CHAT / SESSIONS NÃO ficam mais aqui.\n-- Elas vivem no workflow \"Sameka-DB-Schema-Setup\" e nas migrations (001-007).\n\n-- 1. Tabela de Arquivos (Drive metadata)\nCREATE TABLE IF NOT EXISTS sameka_document_metadata (\n    id TEXT PRIMARY KEY,\n    title TEXT,\n    url TEXT,\n    created_at TIMESTAMP DEFAULT NOW(),\n    schema TEXT,\n    session_id TEXT,\n    modified_time TEXT,\n    content_hash TEXT,\n    last_indexed_at TIMESTAMP\n);\n\n-- Garante colunas novas em bases pré-existentes (sem perder dados)\nALTER TABLE sameka_document_metadata ADD COLUMN IF NOT EXISTS modified_time TEXT;\nALTER TABLE sameka_document_metadata ADD COLUMN IF NOT EXISTS content_hash TEXT;\nALTER TABLE sameka_document_metadata ADD COLUMN IF NOT EXISTS last_indexed_at TIMESTAMP;\n\n-- 2. Tabela de Linhas (Excel/CSV)\nCREATE TABLE IF NOT EXISTS sameka_document_rows (\n    id SERIAL PRIMARY KEY,\n    dataset_id TEXT REFERENCES sameka_document_metadata(id) ON DELETE CASCADE,\n    row_data JSONB\n);",
         "options": {}
       },
-      "id": "6bf686fb-e067-4638-b75c-516e004da2bc",
+      "id": "aab239d0-8f71-43a5-8c27-70eded57a4b6",
       "name": "Create Standard Tables",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [2256, 240],
+      "position": [5488, -2016],
       "credentials": {
         "postgres": {
           "id": "jFjeYH6Nt3aRNkoM",
@@ -645,11 +644,11 @@
         "query": "-- ✅ Idempotente. Preserva todos os vetores já indexados.\nCREATE EXTENSION IF NOT EXISTS vector;\n\n-- Tabela de Vetores (RAG)\nCREATE TABLE IF NOT EXISTS sameka_documents (\n  id bigserial PRIMARY KEY,\n  content text,\n  metadata jsonb,\n  embedding vector(1536)\n);\n\n-- Função de busca (Match) — pode dropar e recriar, é stateless\nDROP FUNCTION IF EXISTS sameka_match_documents;\nCREATE FUNCTION sameka_match_documents (\n  query_embedding vector(1536),\n  match_count int DEFAULT NULL,\n  filter jsonb DEFAULT '{}'\n) RETURNS TABLE (\n  id bigint,\n  content text,\n  metadata jsonb,\n  similarity float\n)\nLANGUAGE plpgsql\nAS $$\n#variable_conflict use_column\nBEGIN\n  RETURN QUERY\n  SELECT\n    id,\n    content,\n    metadata,\n    1 - (sameka_documents.embedding <=> query_embedding) AS similarity\n  FROM sameka_documents\n  WHERE metadata @> filter\n  ORDER BY sameka_documents.embedding <=> query_embedding\n  LIMIT match_count;\nEND;\n$$;",
         "options": {}
       },
-      "id": "b9f459e8-aedf-4da7-bc40-76bafcd81258",
+      "id": "5763beff-083c-45d3-8bc3-8cedf844ef60",
       "name": "Create Vector Table & Functions1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [2448, 240],
+      "position": [5680, -2016],
       "credentials": {
         "postgres": {
           "id": "jFjeYH6Nt3aRNkoM",
@@ -663,11 +662,11 @@
         "query": "-- ✅ Apenas garante índices. NÃO apaga dados.\n-- A limpeza por-arquivo acontece em \"Delete Old Doc Rows1\" SOMENTE quando o arquivo mudou.\nCREATE INDEX IF NOT EXISTS sameka_idx_doc_metadata_session\nON sameka_document_metadata(session_id);\n\nCREATE INDEX IF NOT EXISTS sameka_idx_doc_metadata_modified\nON sameka_document_metadata(modified_time);\n\nCREATE INDEX IF NOT EXISTS sameka_idx_documents_metadata_gin\nON sameka_documents USING GIN (metadata);\n\n-- Índice para acelerar lookups por file_id no JSON metadata\nCREATE INDEX IF NOT EXISTS sameka_idx_documents_file_id\nON sameka_documents ((metadata->>'file_id'));",
         "options": {}
       },
-      "id": "ac4374c3-ffed-4ffc-99ce-8ccd84faa24f",
+      "id": "97d9e808-c0b0-4ed2-9b22-ad6ef260366d",
       "name": "Ensure RAG Indexes",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [2784, 240],
+      "position": [6016, -2016],
       "credentials": {
         "postgres": {
           "id": "jFjeYH6Nt3aRNkoM",
@@ -679,8 +678,8 @@
       "parameters": {},
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
-      "position": [2032, 432],
-      "id": "75195e1c-cb41-418c-8155-b5990eff9118",
+      "position": [5264, -1824],
+      "id": "88b54298-f3a0-4e74-837d-7062b1a624c0",
       "name": "When clicking ‘Execute workflow’"
     },
     {
@@ -733,11 +732,11 @@
         },
         "options": {}
       },
-      "id": "83b984cd-014c-4d43-8909-f8f67e666204",
+      "id": "e1c7ded6-e67d-46e0-82c4-e36490c55fac",
       "name": "Set File ID - to Context",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [3440, 336]
+      "position": [6672, -1920]
     },
     {
       "parameters": {
@@ -746,11 +745,11 @@
         "width": 1276,
         "color": 2
       },
-      "id": "e7d4f562-cda1-4f31-a3c3-d2c7729485d5",
+      "id": "37fac7c1-a0de-4705-8344-d1995b3dcac1",
       "name": "Sticky Note Session",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [560, 16]
+      "position": [3792, -2240]
     },
     {
       "parameters": {
@@ -763,11 +762,11 @@
           ]
         }
       },
-      "id": "0e6a9775-cfef-40bf-b73f-876e2f5e2ed6",
+      "id": "b619cfe3-0a4f-484f-b20c-aa34d4c38c31",
       "name": "24h Trigger (Session)1",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
-      "position": [624, 528]
+      "position": [3856, -1728]
     },
     {
       "parameters": {
@@ -775,11 +774,11 @@
         "query": "SELECT id \nFROM sameka_document_metadata \nWHERE session_id IS NOT NULL ",
         "options": {}
       },
-      "id": "4d257fe6-2536-4358-b522-de6bac5fa5dc",
+      "id": "01eaab65-1503-43c6-9390-37ae441cc871",
       "name": "Get Expired File IDs1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [896, 400],
+      "position": [4128, -1856],
       "alwaysOutputData": true,
       "credentials": {
         "postgres": {
@@ -792,11 +791,11 @@
       "parameters": {
         "options": {}
       },
-      "id": "3b393c57-ef54-46f9-855e-8c8ac31f99f1",
+      "id": "6b9a32ea-6fdd-411a-ba82-edfbd7fd44ce",
       "name": "Loop Expired Files1",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
-      "position": [1312, 416]
+      "position": [4544, -1840]
     },
     {
       "parameters": {
@@ -808,11 +807,11 @@
         },
         "options": {}
       },
-      "id": "0e02965f-7b87-4590-b65e-5465c8f62787",
+      "id": "bbd7907b-6e99-4d6d-944c-a347fe02bfd3",
       "name": "Delete from Google Drive1",
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
-      "position": [1600, 528],
+      "position": [4832, -1728],
       "credentials": {
         "googleDriveOAuth2Api": {
           "id": "1yxLK6IGIPQiU21B",
@@ -827,11 +826,11 @@
         "query": "-- ✅ Limpeza segura de DADOS DE SESSÃO (não toca em docs globais nem migrations).\n-- Envolvido em DO/EXCEPTION para nunca quebrar o workflow se uma tabela legada não existir.\nDO $$\nBEGIN\n  -- 1. Remove chat APENAS de sessões cujos docs já expiraram (não apaga histórico ativo)\n  BEGIN\n    DELETE FROM sameka_chat_message\n    WHERE session_id IN (\n      SELECT session_id FROM sameka_document_metadata WHERE session_id IS NOT NULL\n    );\n  EXCEPTION WHEN undefined_table THEN\n    RAISE NOTICE 'sameka_chat_message ausente — pulando';\n  END;\n\n  -- 2. Remove vetores de sessão\n  BEGIN\n    DELETE FROM sameka_documents\n    WHERE metadata->>'session_id' IS NOT NULL\n      AND metadata->>'session_id' <> '';\n  EXCEPTION WHEN undefined_table THEN\n    RAISE NOTICE 'sameka_documents ausente — pulando';\n  END;\n\n  -- 3. Remove metadados/linhas de sessão (rows caem via CASCADE)\n  BEGIN\n    DELETE FROM sameka_document_metadata\n    WHERE session_id IS NOT NULL;\n  EXCEPTION WHEN undefined_table THEN\n    RAISE NOTICE 'sameka_document_metadata ausente — pulando';\n  END;\nEND $$;",
         "options": {}
       },
-      "id": "db125a02-5b92-42cf-ae45-1646d9d18d42",
+      "id": "fdf59dca-3af5-4417-aaad-d50f627fbcd8",
       "name": "Clean Database Records1",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [1600, 320],
+      "position": [4832, -1936],
       "alwaysOutputData": true,
       "credentials": {
         "postgres": {
@@ -847,11 +846,11 @@
         "responseMode": "responseNode",
         "options": {}
       },
-      "id": "be5cca55-a2cf-444a-84b5-84b0b5cd8c63",
+      "id": "ed1bdece-fac5-4456-b17a-0ad7446b5609",
       "name": "Webhook Setup",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [624, 256],
+      "position": [3856, -2000],
       "webhookId": "1c70aff4-7d8b-4d00-abd9-0ecda88405ee"
     },
     {
@@ -860,11 +859,11 @@
         "responseBody": "{\n  \"status\": \"success\",\n  \"message\": \"Documento processado com sucesso! Memória RAG atualizada.\"\n}",
         "options": {}
       },
-      "id": "c9c4ad55-e2d5-4db0-80d2-73857b0f3c67",
+      "id": "af496fcb-1e8d-460c-9205-66a25b65fb4a",
       "name": "Confirmar Upload",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [3520, 80]
+      "position": [6752, -2176]
     },
     {
       "parameters": {
@@ -872,8 +871,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [6224, 432],
-      "id": "cdb6b904-9f30-4bdc-b82a-00bb67a91345",
+      "position": [9456, -1824],
+      "id": "31967aa2-2595-44c7-b167-0ea9060977bb",
       "name": "Limpar RAM"
     },
     {
@@ -883,9 +882,9 @@
         "width": 304
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [2336, 1008],
+      "position": [5568, -1248],
       "typeVersion": 1,
-      "id": "46e54479-62fb-4350-a026-995fc5febe84",
+      "id": "64f8a94c-4782-4207-bb11-6d52afe6b36a",
       "name": "Sticky Note4"
     },
     {
@@ -895,9 +894,9 @@
         "width": 320
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [2672, 1024],
+      "position": [5904, -1232],
       "typeVersion": 1,
-      "id": "257a2ea0-4c2e-4f34-9f9d-a1149962da53",
+      "id": "2a03864a-3ff4-42cc-9675-bcbee6ac60ae",
       "name": "Sticky Note6"
     },
     {
@@ -935,8 +934,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [3760, 336],
-      "id": "e1d2c3b4-a5f6-4e7d-8c9b-0a1f2e3d4c5b",
+      "position": [6992, -1920],
+      "id": "709dac56-5e9d-4f59-9ee9-04b6b08645df",
       "name": "Skip If Unchanged"
     },
     {
@@ -966,8 +965,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [3840, 432],
-      "id": "92d14eb3-9df4-45d3-801d-b9405bb7a7c7",
+      "position": [7072, -1824],
+      "id": "9b97080a-bbfb-4023-9806-7dc4ec2480ee",
       "name": "If"
     },
     {
@@ -976,11 +975,11 @@
         "query": "SELECT session_id, modified_time, content_hash FROM sameka_document_metadata WHERE id = '{{ $('Set File ID - to Context').item.json.file_id }}'",
         "options": {}
       },
-      "id": "5cf6e57c-1b6a-4c6b-8f90-9b6aad739b3e",
+      "id": "6e99923a-0b23-4f98-8e03-eb8758b38ccb",
       "name": "Check Session Integrity",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.4,
-      "position": [3632, 336],
+      "position": [6864, -1920],
       "alwaysOutputData": true,
       "credentials": {
         "postgres": {
@@ -995,8 +994,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [5696, 368],
-      "id": "70f04e58-1f38-4243-b4a4-9a72e946d6a8",
+      "position": [8928, -1888],
+      "id": "815f1048-fa4c-4d3f-bcc8-50a92122f5d5",
       "name": "Limpeza Excel"
     },
     {
@@ -1005,8 +1004,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [5696, 512],
-      "id": "a896a64a-d7f3-46a7-9b6f-745bed679e27",
+      "position": [8928, -1744],
+      "id": "5a70f1ac-12d0-4de1-b495-1604c51b40b2",
       "name": "Limpeza de Docs"
     },
     {
@@ -1015,8 +1014,8 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [6368, 432],
-      "id": "a58b19e5-c6e0-48d7-baf0-c31dc134e9f0",
+      "position": [9600, -1824],
+      "id": "87b83d61-b3f1-49df-9ee0-16dbc4e559a4",
       "name": "Wait",
       "webhookId": "79b70584-7a14-4c4d-9ce3-6ff01b47128f"
     },
@@ -1026,8 +1025,8 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [1952, 240],
-      "id": "0552750b-12ee-422d-98e5-15be8fc5e30c",
+      "position": [5184, -2016],
+      "id": "9d0ee46c-0079-4240-a9f7-afb02ef60fe6",
       "name": "Wait1",
       "webhookId": "f18070ac-659f-41e0-9fac-920d996cefad"
     },
@@ -1058,8 +1057,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [1088, 240],
-      "id": "ca18863e-0144-448a-b169-0cfc5a04b12d",
+      "position": [4320, -2016],
+      "id": "560a025f-cc3c-4b6d-ac20-d1bc4f36d0db",
       "name": "If1"
     },
     {
@@ -1068,8 +1067,8 @@
       },
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
-      "position": [5552, 832],
-      "id": "72e6a197-9926-4f09-9d1d-71c210498ab1",
+      "position": [8784, -1424],
+      "id": "2fa00718-c4a6-4b79-8ef6-4addc8aba53a",
       "name": "Embeddings Google Gemini",
       "credentials": {
         "googlePalmApi": {
@@ -1084,8 +1083,8 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
       "typeVersion": 1,
-      "position": [5712, 832],
-      "id": "0ac5c1d9-8433-4269-895c-8f6829feaed3",
+      "position": [8944, -1424],
+      "id": "fb56bbab-1ee5-457a-aa0a-e0b1d7b89793",
       "name": "OpenRouter Chat Model",
       "credentials": {
         "openRouterApi": {
@@ -1217,8 +1216,8 @@
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [4368, 224],
-      "id": "d019f118-61ec-431e-8ba5-c1072742ccff",
+      "position": [7600, -2032],
+      "id": "a01104ce-2c46-4a26-bdc9-7d0e2db4cee1",
       "name": "Insert Document Metadata1",
       "executeOnce": true,
       "credentials": {
@@ -1235,8 +1234,8 @@
       },
       "type": "@n8n/n8n-nodes-langchain.embeddingsAzureOpenAi",
       "typeVersion": 1,
-      "position": [5792, 688],
-      "id": "32820410-3515-40f8-8493-3465c175ed1f",
+      "position": [9024, -1568],
+      "id": "015f0eea-7e99-428a-a29c-11f77de6c38c",
       "name": "Embeddings Azure OpenAI",
       "credentials": {
         "azureOpenAiApi": {
@@ -1252,23 +1251,22 @@
         "width": 760,
         "color": 5
       },
-      "id": "f1a00000-0000-0000-0000-000000000001",
+      "id": "54121505-e1cb-42b9-8c4e-2c2aa62c46df",
       "name": "Sticky Note RAG Admin",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
-      "position": [560, 1440]
+      "position": [3792, -816]
     },
     {
       "parameters": {
-        "httpMethod": "GET",
         "path": "sameka-rag-docs",
         "responseMode": "responseNode",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [624, 1648],
-      "id": "f1a00000-0000-0000-0000-000000000002",
+      "position": [3856, -608],
+      "id": "2cf55104-15ad-4981-9ccc-b26027b92643",
       "name": "Webhook RAG Docs List",
       "webhookId": "f1a00000-0000-0000-0000-000000000002"
     },
@@ -1280,8 +1278,8 @@
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [864, 1648],
-      "id": "f1a00000-0000-0000-0000-000000000003",
+      "position": [4096, -608],
+      "id": "a09340f3-a5cc-44f5-885b-e7e0cb2cc306",
       "name": "List RAG Docs",
       "credentials": {
         "postgres": {
@@ -1296,8 +1294,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1104, 1648],
-      "id": "f1a00000-0000-0000-0000-000000000004",
+      "position": [4336, -608],
+      "id": "d12f8e9b-de8b-4a5b-9057-ced72348c609",
       "name": "Aggregate RAG Docs"
     },
     {
@@ -1307,16 +1305,22 @@
           "responseCode": 200,
           "responseHeaders": {
             "entries": [
-              { "name": "Access-Control-Allow-Origin", "value": "*" },
-              { "name": "Content-Type", "value": "application/json" }
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
             ]
           }
         }
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1344, 1648],
-      "id": "f1a00000-0000-0000-0000-000000000005",
+      "position": [4576, -608],
+      "id": "080470e0-eb87-4a8c-bf75-f73fce788467",
       "name": "Respond RAG Docs List"
     },
     {
@@ -1328,8 +1332,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [624, 1856],
-      "id": "f1a00000-0000-0000-0000-000000000006",
+      "position": [3856, -256],
+      "id": "38aa4707-a91a-43ab-848f-dac31d09c334",
       "name": "Webhook RAG Doc Delete",
       "webhookId": "f1a00000-0000-0000-0000-000000000006"
     },
@@ -1360,17 +1364,17 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [864, 1856],
-      "id": "f1a00000-0000-0000-0000-000000000007",
+      "position": [4096, -256],
+      "id": "0cd96b55-6b08-4e79-828b-a0ce527b817a",
       "name": "Has file_id?"
     },
     {
       "parameters": {
-        "source": "database",
         "workflowId": {
           "__rl": true,
-          "value": "DRIVE_DOC_MANAGER_ID",
-          "mode": "id",
+          "value": "AHHho9B3QmaMkJu8",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/AHHho9B3QmaMkJu8",
           "cachedResultName": "[Sameka] Sub-fluxo: Drive Document Manager"
         },
         "workflowInputs": {
@@ -1407,8 +1411,8 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [1104, 1700],
-      "id": "f1a00000-0000-0000-0000-00000000000b",
+      "position": [4336, -416],
+      "id": "2cfe5467-58dc-4f24-becc-a764cbd88b59",
       "name": "Drive: Delete File (subflow)",
       "continueOnFail": true
     },
@@ -1420,8 +1424,8 @@
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [1344, 1700],
-      "id": "f1a00000-0000-0000-0000-000000000008",
+      "position": [4576, -416],
+      "id": "6b41facc-4734-49e2-a163-d1ed09a676fc",
       "name": "Delete RAG Doc",
       "credentials": {
         "postgres": {
@@ -1438,16 +1442,22 @@
           "responseCode": 200,
           "responseHeaders": {
             "entries": [
-              { "name": "Access-Control-Allow-Origin", "value": "*" },
-              { "name": "Content-Type", "value": "application/json" }
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
             ]
           }
         }
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1584, 1700],
-      "id": "f1a00000-0000-0000-0000-000000000009",
+      "position": [4816, -416],
+      "id": "b97fe374-c305-4717-8928-192593cb1a46",
       "name": "Respond RAG Doc Delete OK"
     },
     {
@@ -1458,16 +1468,22 @@
           "responseCode": 400,
           "responseHeaders": {
             "entries": [
-              { "name": "Access-Control-Allow-Origin", "value": "*" },
-              { "name": "Content-Type", "value": "application/json" }
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
             ]
           }
         }
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1104, 1968],
-      "id": "f1a00000-0000-0000-0000-00000000000a",
+      "position": [4336, -144],
+      "id": "91953454-233e-4a73-b86f-0eaab54b0c19",
       "name": "Respond RAG Doc Delete Error"
     },
     {
@@ -1479,8 +1495,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [624, 2096],
-      "id": "f1a00000-0000-0000-0000-00000000000b",
+      "position": [3856, -16],
+      "id": "2d506cc0-50e4-49cb-a1e0-bb497bdbc00f",
       "name": "Webhook RAG Purge All",
       "webhookId": "f1a00000-0000-0000-0000-00000000000b"
     },
@@ -1492,8 +1508,8 @@
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [864, 2096],
-      "id": "f1a00000-0000-0000-0000-00000000000c",
+      "position": [4096, -16],
+      "id": "3b57216a-212d-4312-969a-a2b1b0f1f0df",
       "name": "Get Global Doc IDs",
       "credentials": {
         "postgres": {
@@ -1510,8 +1526,8 @@
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [1104, 2096],
-      "id": "f1a00000-0000-0000-0000-00000000000d",
+      "position": [4336, -16],
+      "id": "33fc595f-be2d-44ae-b44d-5660cb75b1cc",
       "name": "Purge All Global Docs",
       "credentials": {
         "postgres": {
@@ -1547,17 +1563,17 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [1344, 2096],
-      "id": "f1a00000-0000-0000-0000-00000000000e",
+      "position": [4576, -16],
+      "id": "24a91f98-2cd2-40d6-a4d4-51a1ef48f294",
       "name": "Also Delete From Drive?"
     },
     {
       "parameters": {
-        "source": "database",
         "workflowId": {
           "__rl": true,
-          "value": "DRIVE_DOC_MANAGER_ID",
-          "mode": "id",
+          "value": "AHHho9B3QmaMkJu8",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/AHHho9B3QmaMkJu8",
           "cachedResultName": "[Sameka] Sub-fluxo: Drive Document Manager"
         },
         "workflowInputs": {
@@ -1594,8 +1610,8 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [1584, 1968],
-      "id": "f1a00000-0000-0000-0000-00000000000f",
+      "position": [4816, -144],
+      "id": "d0f5dc42-bb86-4a62-b7ee-aa1827792943",
       "name": "Drive: Bulk Delete (subflow)",
       "continueOnFail": true
     },
@@ -1607,16 +1623,22 @@
           "responseCode": 200,
           "responseHeaders": {
             "entries": [
-              { "name": "Access-Control-Allow-Origin", "value": "*" },
-              { "name": "Content-Type", "value": "application/json" }
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
             ]
           }
         }
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1824, 2096],
-      "id": "f1a00000-0000-0000-0000-000000000010",
+      "position": [5056, -16],
+      "id": "440c6cfa-f6e1-45a2-9aba-f6bbb8052981",
       "name": "Respond RAG Purge OK"
     },
     {
@@ -1628,8 +1650,8 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [624, 2304],
-      "id": "f1a00000-0000-0000-0000-000000000011",
+      "position": [3856, 192],
+      "id": "9174c591-1106-41f9-9041-eb1fd3942c07",
       "name": "Webhook RAG Reprocess All",
       "webhookId": "f1a00000-0000-0000-0000-000000000011"
     },
@@ -1641,8 +1663,8 @@
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [864, 2304],
-      "id": "f1a00000-0000-0000-0000-000000000012",
+      "position": [4096, 192],
+      "id": "53975588-d8de-4f1b-a78c-ddbd3fa1f9e1",
       "name": "Reset Reprocess Markers",
       "credentials": {
         "postgres": {
@@ -1659,189 +1681,26 @@
           "responseCode": 200,
           "responseHeaders": {
             "entries": [
-              { "name": "Access-Control-Allow-Origin", "value": "*" },
-              { "name": "Content-Type", "value": "application/json" }
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
             ]
           }
         }
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1104, 2304],
-      "id": "f1a00000-0000-0000-0000-000000000013",
+      "position": [4336, 192],
+      "id": "92ee8c74-bd31-42a7-9ebc-6bdd3292bb41",
       "name": "Respond Reprocess OK"
     }
   ],
-  "pinData": {},
   "connections": {
-    "Webhook RAG Docs List": {
-      "main": [
-        [
-          {
-            "node": "List RAG Docs",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "List RAG Docs": {
-      "main": [
-        [
-          {
-            "node": "Aggregate RAG Docs",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Aggregate RAG Docs": {
-      "main": [
-        [
-          {
-            "node": "Respond RAG Docs List",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Webhook RAG Doc Delete": {
-      "main": [
-        [
-          {
-            "node": "Has file_id?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Has file_id?": {
-      "main": [
-        [
-          {
-            "node": "Drive: Delete File (subflow)",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Respond RAG Doc Delete Error",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Drive: Delete File (subflow)": {
-      "main": [
-        [
-          {
-            "node": "Delete RAG Doc",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Delete RAG Doc": {
-      "main": [
-        [
-          {
-            "node": "Respond RAG Doc Delete OK",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Webhook RAG Purge All": {
-      "main": [
-        [
-          {
-            "node": "Get Global Doc IDs",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Global Doc IDs": {
-      "main": [
-        [
-          {
-            "node": "Purge All Global Docs",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Purge All Global Docs": {
-      "main": [
-        [
-          {
-            "node": "Also Delete From Drive?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Also Delete From Drive?": {
-      "main": [
-        [
-          {
-            "node": "Drive: Bulk Delete (subflow)",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Respond RAG Purge OK",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Drive: Bulk Delete (subflow)": {
-      "main": [
-        [
-          {
-            "node": "Respond RAG Purge OK",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Webhook RAG Reprocess All": {
-      "main": [
-        [
-          {
-            "node": "Reset Reprocess Markers",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Reset Reprocess Markers": {
-      "main": [
-        [
-          {
-            "node": "Respond Reprocess OK",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Default Data Loader": {
       "ai_document": [
         [
@@ -2222,6 +2081,18 @@
         ]
       ]
     },
+    "Skip If Unchanged": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "If": {
       "main": [
         [
@@ -2245,18 +2116,6 @@
         [
           {
             "node": "Skip If Unchanged",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Skip If Unchanged": {
-      "main": [
-        [],
-        [
-          {
-            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -2325,9 +2184,6 @@
         ]
       ]
     },
-    "Embeddings Google Gemini": {
-      "ai_embedding": [[]]
-    },
     "Insert Document Metadata1": {
       "main": [
         [
@@ -2349,19 +2205,179 @@
           }
         ]
       ]
+    },
+    "Webhook RAG Docs List": {
+      "main": [
+        [
+          {
+            "node": "List RAG Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List RAG Docs": {
+      "main": [
+        [
+          {
+            "node": "Aggregate RAG Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate RAG Docs": {
+      "main": [
+        [
+          {
+            "node": "Respond RAG Docs List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook RAG Doc Delete": {
+      "main": [
+        [
+          {
+            "node": "Has file_id?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has file_id?": {
+      "main": [
+        [
+          {
+            "node": "Drive: Delete File (subflow)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond RAG Doc Delete Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive: Delete File (subflow)": {
+      "main": [
+        [
+          {
+            "node": "Delete RAG Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete RAG Doc": {
+      "main": [
+        [
+          {
+            "node": "Respond RAG Doc Delete OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook RAG Purge All": {
+      "main": [
+        [
+          {
+            "node": "Get Global Doc IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Global Doc IDs": {
+      "main": [
+        [
+          {
+            "node": "Purge All Global Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Purge All Global Docs": {
+      "main": [
+        [
+          {
+            "node": "Also Delete From Drive?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Also Delete From Drive?": {
+      "main": [
+        [
+          {
+            "node": "Drive: Bulk Delete (subflow)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond RAG Purge OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive: Bulk Delete (subflow)": {
+      "main": [
+        [
+          {
+            "node": "Respond RAG Purge OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook RAG Reprocess All": {
+      "main": [
+        [
+          {
+            "node": "Reset Reprocess Markers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reset Reprocess Markers": {
+      "main": [
+        [
+          {
+            "node": "Respond Reprocess OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": true,
-  "settings": {
-    "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
-  },
-  "versionId": "be605702-c6a1-4f7b-9604-e17a694b12d3",
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "03d32a206f2d8840fce482e6c587726f18775bd9177e9401c00ca76d3086ad41"
-  },
-  "id": "wfnEOEeQbsTMtJUL",
-  "tags": []
+  }
 }
